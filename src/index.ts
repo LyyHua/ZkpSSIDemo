@@ -1,22 +1,26 @@
 import { start } from "@iota/identity-wasm/node/identity_wasm"
-import { initializeDID, publishDID, simulateZKP } from "./zkp"
+import { initializeDID, simulateZKP } from "./zkp" // Removed publishDID as it's not used
 
 async function main() {
     try {
         start() // Initialize the WASM module
         console.log("IOTA Identity WASM module initialized successfully.")
 
-        const document = await initializeDID() // Correctly assign the returned IotaDocument
-        if (document) {
-            console.log("DID Initialized:", document.id().toString())
-            // If you need to pass the document to publishDID or simulateZKP, do it here
-            // await publishDID(document); // Example if you want to publish
+        // You can still initialize a separate DID here if needed for other purposes
+        // or for observing its structure, but it's not directly used by the self-contained simulateZKP.
+        const mainDocument = await initializeDID()
+        if (mainDocument) {
+            console.log(
+                "Main DID Initialized (from index.ts):",
+                mainDocument.id().toString()
+            )
         } else {
-            console.error("Failed to initialize DID.")
-            process.exit(1) // Exit if DID initialization fails
+            console.error("Failed to initialize main DID (from index.ts).")
+            // process.exit(1); // Decide if this failure should stop the whole process
         }
 
-        await simulateZKP(document) // Pass the initialized document to simulateZKP
+        // simulateZKP is now self-contained and will create its own issuer DID etc.
+        await simulateZKP()
     } catch (error) {
         console.error(
             "Error during application initialization or ZKP simulation:",
