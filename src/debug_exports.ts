@@ -1,3 +1,3 @@
-const identityWasm = require("@iota/identity-wasm/node");
+const identityWasm = require("@iota/identity-wasm/node")
 
-console.log("Available Exports:", Object.keys(identityWasm));
+console.log("Available Exports:", Object.keys(identityWasm))
