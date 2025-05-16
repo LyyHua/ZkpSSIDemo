@@ -1,172 +1,90 @@
 import {
-  IotaDocument,
-  IotaDID,
-  VerificationMethod,
-  MethodScope, // Attempting to import MethodScope
-  // SecretManagerType // Removed import
-} from "@iota/identity-wasm/node"; // Corrected import path
-import { KeyPair } from "@iota/identity-wasm"; // Import KeyPair from base
-import { randomBytes } from "crypto";
+    IotaDocument,
+    IotaDID,
+    VerificationMethod,
+    MethodData,
+    MethodType,
+    DIDUrl,
+    MethodScope,
+    CoreDID
+    // KeyPair and KeyType removed as they are not available here
+} from '@iota/identity-wasm/node/identity_wasm';
 
-// Standalone Mock Implementations
-class MockAddress {
-  address: string;
-  constructor(addressString: string) {
-    this.address = addressString;
-  }
-  static from(addressString: string): MockAddress {
-    return new MockAddress(addressString);
-  }
-  getType(): number {
-    return 0; // Example type for Ed25519
-  }
-  toString(): string {
-    return this.address;
-  }
-}
+import * as crypto from 'crypto';
 
-class MockSecretManager {
-  type: number;
-  constructor(type: number) {
-    this.type = type;
-  }
-  static fromType(type: number): MockSecretManager {
-    return new MockSecretManager(type);
-  }
-  async sign(options: any): Promise<any> {
-    console.log("Mock sign called with:", options);
-    return { signatureValue: "mockSignature", type: "Ed25519VerificationKey2018" }; // Example signature
-  }
-  async getType(): Promise<number> {
-    return this.type;
-  }
-}
+export async function initializeDID(): Promise<IotaDocument> {
+    console.log("Attempting to initialize DID and Document...");
 
-// Mock Config
-class MockConfig {
-  networkName: string;
-  constructor(networkName: string) {
-    this.networkName = networkName;
-  }
-  static fromNetwork(network: string): MockConfig {
-    return new MockConfig(network);
-  }
-  build(): any {
-    return { networkName: this.networkName };
-  }
-}
+    const networkName = "smr"; // Shimmer network (example)
 
-class MockClient {
-  config: MockConfig;
-  constructor(config: MockConfig) { // Expect MockConfig
-    this.config = config;
-    console.log("MockClient initialized with network:", this.config.networkName);
-  }
-  static fromConfig(config: MockConfig): MockClient {
-    return new MockClient(config);
-  }
-  async newDidOutput(address: MockAddress, document: IotaDocument, rentStructure: any): Promise<any> {
-    console.log("Mock newDidOutput called with address:", address.toString(), ", document ID:", document.id().toString(), ", rent:", rentStructure);
-    return { id: "mockOutputId", outputData: "mockOutputDataString" }; // Mocked output
-  }
-  async publishDidOutput(secretManager: MockSecretManager, output: any, doc: IotaDocument): Promise<any> {
-    console.log("Mock publishDidOutput called with secret manager type:", await secretManager.getType(), "and output ID:", output.id);
-    return { transactionId: "mockTransactionId", documentId: doc.id().toString() };
-  }
-}
+    // Generate a new Ed25519 key pair using Node.js crypto
+    const { publicKey: cryptoPublicKey } = crypto.generateKeyPairSync('ed25519');
+    // Export the public key in SPKI DER format
+    const spkiDer = cryptoPublicKey.export({ type: 'spki', format: 'der' });
+    // For Ed25519, the raw public key is the last 32 bytes of the SPKI DER.
+    const publicKeyBytes = new Uint8Array(spkiDer.slice(-32));
+    console.log("Ed25519 public key bytes generated.");
 
-// Use the mock implementations
-const address = MockAddress.from("atoi1qzt0nhsf38nh6rs4p6zs5knqp6psgha9wsv74uajqgjmwc75ugupx3y7x0r"); // Example IOTA address string
-// Global reference for document, to be assigned in initializeDID - This global variable seems unused now and might be removable later.
-let document: IotaDocument; 
+    // Create a new DID with the public key bytes
+    const did: IotaDID = new IotaDID(publicKeyBytes, networkName);
+    console.log(`DID created: ${did.toString()}`);
 
-// Initialize secretManager directly with the numeric type for Stronghold
-let secretManager: MockSecretManager;
-try {
-    // Attempt to use the imported SecretManagerType
-    // secretManager = MockSecretManager.fromType(SecretManagerType.Stronghold); // Commented out as SecretManagerType is removed
-    // Fallback to placeholder value 2 for Stronghold, now directly using number
-    secretManager = MockSecretManager.fromType(2); 
-} catch (e) {
-    console.warn("Failed to use imported SecretManagerType.Stronghold, ensure it's correctly exported and available. Falling back to placeholder value 2 for Stronghold.");
-    secretManager = MockSecretManager.fromType(2); 
-}
-console.log("MockSecretManager initialized with type:", 2);
+    // Create a new IOTA Document with the DID
+    let document: IotaDocument = IotaDocument.newWithId(did);
+    console.log("IOTA Document created.");
 
-export async function initializeDID(): Promise<IotaDocument | null> {
-  try {
-    const networkName = "smr";
-    console.log(`Attempting to create IotaDID for network: ${networkName} using IotaDID.fromRandom()...`);
-    const did = IotaDID.fromRandom(networkName);
-    console.log(`IotaDID created: ${did.toString()}`);
-    console.log(`DID Network: ${did.network()}`);
-    console.log(`DID Tag: ${did.tag()}`);
+    // Define properties for the new Verification Method
+    const fragment = "key-1";
+    const methodTypeInstance: MethodType = MethodType.Ed25519VerificationKey2018();
+    // Create MethodData from the public key bytes
+    const methodData: MethodData = MethodData.newBase58(publicKeyBytes);
 
-    console.log("Attempting to create IotaDocument with new DID using newWithId...");
-    const document = IotaDocument.newWithId(did);
-    console.log(`IotaDocument created successfully. DID: ${document.id().toString()}`);
+    // Construct the full DID URL for the verification method
+    const methodIdString = document.id().toString() + "#" + fragment;
+    const methodId: DIDUrl = DIDUrl.parse(methodIdString);
 
-    // Add a verification method to the document
-    console.log("Attempting to create and insert verification method...");
-    const methodFragment = "#key-1";
-    // Assuming KeyPair is not directly needed if VerificationMethod can be created from DID + new Key Material or similar
-    // This part is highly dependent on the actual API of VerificationMethod
-    // Let's try to create a new KeyPair for the method, assuming it's available from the base package
-    // If KeyPair is not in @iota/identity-wasm/node, this will fail.
-    // We might need to find an alternative way to create a method or use a placeholder if direct keypair generation is problematic.
+    // The controller of the verification method is the DID of the document itself.
+    const controller: CoreDID = CoreDID.parse(document.id().toString());
 
-    // For now, let's assume VerificationMethod.newFromDid exists and works with a DID object and a fragment.
-    // This is a guess based on common patterns. The actual API might differ.
-    // The third argument for newFromDid is often a KeyPair or public key material.
-    // Since we don't have an easy way to get a KeyPair that's compatible, this might be an issue.
-    // Let's try creating a method without a specific keypair first, if the API allows, or find the correct way.
+    // Create a new Verification Method instance
+    const verificationMethod: VerificationMethod = new VerificationMethod(
+        methodId,           // id: DIDUrl (full URL of the method)
+        controller,         // controller: CoreDID (DID of the document)
+        methodTypeInstance, // type_: MethodType
+        methodData          // data: MethodData (public key material)
+    );
+    console.log("Verification method created.");
 
-    // The previous custom types showed VerificationMethod.fromDID(did: string, keyPair: KeyPair, fragment: string)
-    // Let's revert to trying to use a KeyPair if it can be imported from the node bindings, otherwise this will be an issue.
-    // For now, we will skip adding a verification method if KeyPair is not easily usable.
+    // Insert the verification method into the document
+    document.insertMethod(verificationMethod, MethodScope.Authentication());
+    console.log("Verification method inserted into document.");
 
-    console.log("Document before publishing (mock):", JSON.stringify(document.toJSON(), null, 2));
-
-    const client = new MockClient(new MockConfig(networkName));
-    let secretManager = MockSecretManager.fromType(2);
-
-    console.log("Mock publishing DID document...");
-    const publishResult = await client.publishDidOutput(secretManager, { id: document.id().toString() }, document);
-    console.log("Mock publish result:", publishResult);
-
+    console.log("DID and Document initialization complete.");
+    console.log("Document JSON:", JSON.stringify(document.toJSON(), null, 2));
     return document;
-  } catch (error) {
-    console.error("Error in initializeDID:", error);
-    if (error instanceof Error && error.message) {
-      console.error("Error message:", error.message);
-      // Log the error name as well, as InvalidNetworkName is specific
-      console.error(`Error name: ${error.name}`);
-      if (error.stack) {
-        console.error("Error stack:", error.stack);
-      }
-    } else {
-      console.error("An unexpected error occurred:", error);
-    }
-    return null;
-  }
 }
 
 export async function publishDID(document: IotaDocument): Promise<void> {
-    // Placeholder for publish logic
+    console.log("Publishing DID (mock implementation)...", document.toJSON());
+    console.log("DID Document published (mocked).\n");
 }
 
-async function simulateZKP() {
-  console.log("ZKP Simulation Initialized");
-  const localDocument = await initializeDID();
-  
-  if (localDocument) {
-    console.log("Simulating ZKP with DID:", localDocument.id().toString());
-    // Placeholder for ZKP logic
-  } else {
-    console.error("Failed to initialize DID, cannot simulate ZKP.");
-  }
+/**
+ * Simulates a Zero-Knowledge Proof operation (placeholder).
+ * @param document The IOTA Document containing the DID information.
+ */
+export async function simulateZKP(document?: IotaDocument) {
+    if (!document) {
+        console.log("Document not provided, initializing new one for ZKP simulation.");
+        document = await initializeDID();
+    }
+    console.log("Simulating ZKP with document:", document.id().toString());
+    // Placeholder for actual ZKP logic
+    // This might involve using the verification methods, signing/verifying challenges, etc.
+    console.log("ZKP simulation placeholder complete.");
 }
 
-simulateZKP().catch(error => {
-  // Error is logged in initializeDID if it originates there
-});
+// Removed direct call to simulateZKP() to avoid double execution
+// simulateZKP().catch(error => {
+//     console.error("Unhandled error in ZKP simulation:", error);
+// });

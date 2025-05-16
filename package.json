@@ -11,8 +11,11 @@
   "description": "",
   "dependencies": {
     "@iota/identity-wasm": "^1.5.1",
-    "@types/node": "^22.15.18",
+    "crypto": "^1.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.18"
   }
 }
