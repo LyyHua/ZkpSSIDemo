@@ -1,28 +1,31 @@
 declare module "@iota/identity-wasm" {
-    export class Client {
-        static fromConfig(config: Config): Client
-        publishDocument(document: Document): Promise<any>
+    export class Credential {
+        constructor(data: any)
     }
 
-    export class Config {
-        static fromNetwork(network: string): Config
+    export class VerifiableCredential {
+        constructor(credential: Credential, options: any)
     }
 
-    export class Document {
-        constructor(keyPair: KeyPair)
-        id: string
-        insertMethod(method: VerificationMethod, type: string): void
+    export class Presentation {
+        constructor(data: any)
     }
 
-    export class KeyPair {
-        constructor()
+    export class VerifiablePresentation {
+        constructor(presentation: Presentation, options: any)
     }
 
-    export class VerificationMethod {
-        static fromDID(
-            did: string,
-            keyPair: KeyPair,
-            fragment: string
-        ): VerificationMethod
+    export class ProofOptions {}
+
+    export class Resolver {}
+
+    export class Timestamp {
+        static now(): Timestamp
+        // If you know other static or instance methods, they can be added here.
+        // For example, if Timestamp can be constructed from a string:
+        // constructor(rfc3339: string);
+        // toRFC3339(): string;
     }
+
+    export function start(): void
 }
