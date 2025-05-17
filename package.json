@@ -4,7 +4,17 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/index.js",
+    "start:basic": "node dist/index.js basic",
+    "start:advanced": "node dist/index.js advanced",
+    "start:examples": "node dist/index.js examples",
+    "start:all": "node dist/index.js all",
+    "help": "npx tsc && node dist/help.js",
     "build": "npx tsc",
+    "dev": "npx tsc && node dist/index.js",
+    "dev:basic": "npx tsc && node dist/index.js basic",
+    "dev:advanced": "npx tsc && node dist/index.js advanced",
+    "dev:examples": "npx tsc && node dist/index.js examples",
+    "dev:all": "npx tsc && node dist/index.js all",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
