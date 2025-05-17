@@ -1,16 +1,14 @@
-import { ageVerificationExample } from "./age_verification";
+import { ageVerificationExample } from "./age_verification"
 
-export {
-    ageVerificationExample
-};
+export { ageVerificationExample }
 
 export async function runExamples() {
-    console.log("=== RUNNING REAL-WORLD ZKP EXAMPLES ===");
-    
+    console.log("=== RUNNING REAL-WORLD ZKP EXAMPLES ===")
+
     try {
         // Age verification example
-        await ageVerificationExample();
+        await ageVerificationExample()
     } catch (error) {
-        console.error("Error running examples:", error);
+        console.error("Error running examples:", error)
     }
 }

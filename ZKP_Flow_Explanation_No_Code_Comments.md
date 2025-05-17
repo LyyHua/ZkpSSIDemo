@@ -26,17 +26,17 @@ In our system, there are three parties:
 1. The **Issuer** creates a credential with all your personal information and digitally signs it
 2. You (the **Holder**) receive this credential and store it securely
 3. When a **Verifier** needs certain information:
-   - You create a presentation that only reveals specific attributes
-   - Other attributes remain hidden (encoded as null values)
-   - The presentation includes cryptographic proof that the information comes from a valid credential
+    - You create a presentation that only reveals specific attributes
+    - Other attributes remain hidden (encoded as null values)
+    - The presentation includes cryptographic proof that the information comes from a valid credential
 
 ## What Makes This "Zero-Knowledge"?
 
 The "zero-knowledge" aspect comes from the selective disclosure:
 
-- The verifier learns only what you choose to reveal (e.g., that you're over 21)
-- The verifier doesn't learn other information in your credential (e.g., your exact birthdate, address, etc.)
-- The verifier can still be confident the information is authentic because of the cryptographic proof
+-   The verifier learns only what you choose to reveal (e.g., that you're over 21)
+-   The verifier doesn't learn other information in your credential (e.g., your exact birthdate, address, etc.)
+-   The verifier can still be confident the information is authentic because of the cryptographic proof
 
 ## Technical Implementation
 
@@ -48,15 +48,17 @@ We've implemented two formats:
 ## Example Scenario
 
 Imagine Alice has a digital ID with:
-- Name: Alice Smith
-- Email: alice@example.com
-- Age: 25
-- Address: 123 Main St
+
+-   Name: Alice Smith
+-   Email: alice@example.com
+-   Age: 25
+-   Address: 123 Main St
 
 When Alice goes to a website that just needs to verify she's over 18, she can:
-- Show ONLY her age (or just that she's over 18)
-- Hide her name, email, and address
-- Provide cryptographic proof that this information comes from her valid ID
+
+-   Show ONLY her age (or just that she's over 18)
+-   Hide her name, email, and address
+-   Provide cryptographic proof that this information comes from her valid ID
 
 The website gets the minimal information needed while Alice maintains her privacy.
 
@@ -69,9 +71,9 @@ The website gets the minimal information needed while Alice maintains her privac
 
 ## Real-World Applications
 
-- Age verification without revealing birthdate
-- Income verification without revealing exact salary
-- Identity verification without revealing personal details
-- Credential verification without revealing sensitive information
+-   Age verification without revealing birthdate
+-   Income verification without revealing exact salary
+-   Identity verification without revealing personal details
+-   Credential verification without revealing sensitive information
 
 This technology enables digital interactions that respect privacy while maintaining trust and security.

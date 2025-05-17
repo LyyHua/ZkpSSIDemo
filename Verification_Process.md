@@ -41,9 +41,9 @@ The Verifier first issues a challenge nonce to prevent replay attacks:
 
 ```typescript
 // Verify nonce matches the expected challenge
-const nonceValid = presentationJwt.nonce === expectedNonce;
+const nonceValid = presentationJwt.nonce === expectedNonce
 if (!nonceValid) {
-    throw new Error("Presentation nonce does not match expected challenge");
+    throw new Error("Presentation nonce does not match expected challenge")
 }
 ```
 
@@ -53,13 +53,14 @@ The Verifier decodes and processes the issuer's metadata:
 
 ```typescript
 // Decode the issuer metadata
-const issuerJwtStr = decodeBase64(zkpPresentation.issuer);
-const issuerJwt: IssuerJwt = JSON.parse(issuerJwtStr);
+const issuerJwtStr = decodeBase64(zkpPresentation.issuer)
+const issuerJwt: IssuerJwt = JSON.parse(issuerJwtStr)
 ```
 
 In a production implementation, the Verifier would:
+
 1. Resolve the Issuer's DID on the IOTA Tangle
-2. Retrieve the Issuer's verification method 
+2. Retrieve the Issuer's verification method
 3. Use the public key to validate the cryptographic proof
 
 #### 2.3 Selective Disclosure Processing
@@ -69,13 +70,13 @@ The Verifier extracts only the disclosed attributes, respecting the privacy of h
 ```typescript
 // Extract disclosed attributes
 zkpPresentation.payloads.forEach((payload, index) => {
-    const attributeName = issuerJwt.claims[index];
-    
+    const attributeName = issuerJwt.claims[index]
+
     if (payload !== null) {
-        const value = decodeBase64(payload);
-        disclosedAttributes[attributeName] = value;
+        const value = decodeBase64(payload)
+        disclosedAttributes[attributeName] = value
     }
-});
+})
 ```
 
 ### 3. Complete Verification in IOTA Identity
@@ -105,13 +106,13 @@ The Verifier in our implementation returns a structured verification result:
 
 ```json
 {
-  "valid": true,
-  "nonceValid": true,
-  "issuer": "https://issuer.tld",
-  "disclosedAttributes": {
-    "given_name": "John",
-    "age": "42"
-  }
+    "valid": true,
+    "nonceValid": true,
+    "issuer": "https://issuer.tld",
+    "disclosedAttributes": {
+        "given_name": "John",
+        "age": "42"
+    }
 }
 ```
 
@@ -127,6 +128,7 @@ Our verification implementation demonstrates these key security concepts:
 4. **Issuer Trust**: Validating the Issuer's identity before accepting claims
 
 In a production environment, additional considerations would include:
-- Credential revocation checking
-- Expiration validation
-- Trust registry integration for Issuer validation
+
+-   Credential revocation checking
+-   Expiration validation
+-   Trust registry integration for Issuer validation

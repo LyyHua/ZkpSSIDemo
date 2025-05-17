@@ -13,24 +13,24 @@ This project implements both:
 
 ## Features
 
-- **Complete SSI Flow**: Issuer → Holder → Verifier implementation
-- **Dynamic WASM Loading**: Compatible with Node.js runtime
-- **Selective Disclosure**: Reveal only specific attributes while hiding others
-- **Cryptographic Verification**: Simulated proof validation
-- **Nonce Protection**: Prevents replay attacks
-- **DID Support**: Uses IOTA Decentralized Identifiers
+-   **Complete SSI Flow**: Issuer → Holder → Verifier implementation
+-   **Dynamic WASM Loading**: Compatible with Node.js runtime
+-   **Selective Disclosure**: Reveal only specific attributes while hiding others
+-   **Cryptographic Verification**: Simulated proof validation
+-   **Nonce Protection**: Prevents replay attacks
+-   **DID Support**: Uses IOTA Decentralized Identifiers
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 16+
-- npm or yarn
+-   Node.js 16+
+-   npm or yarn
 
 ### Installation
 
 ```bash
-# Clone the repository 
+# Clone the repository
 git clone https://github.com/yourusername/iota-zkp-demo.git
 cd iota-zkp-demo
 
@@ -75,41 +75,43 @@ npm run start:all
 ### Process Flow
 
 1. **Issuer**: Creates and signs verifiable credentials
-   - Generates a DID (Decentralized Identifier)
-   - Signs credential with all subject attributes
-   - Delivers the credential to the holder
+
+    - Generates a DID (Decentralized Identifier)
+    - Signs credential with all subject attributes
+    - Delivers the credential to the holder
 
 2. **Holder**: Controls disclosure of credential data
-   - Receives credential from the issuer
-   - Creates selective disclosure presentation
-   - Reveals only specific attributes (e.g., age, vaccination status)
-   - Sends presentation to verifier with cryptographic proof
+
+    - Receives credential from the issuer
+    - Creates selective disclosure presentation
+    - Reveals only specific attributes (e.g., age, vaccination status)
+    - Sends presentation to verifier with cryptographic proof
 
 3. **Verifier**: Validates the presentation
-   - Verifies the cryptographic proof
-   - Processes only the disclosed attributes
-   - Confirms authenticity without seeing hidden attributes
+    - Verifies the cryptographic proof
+    - Processes only the disclosed attributes
+    - Confirms authenticity without seeing hidden attributes
 
-### ZKP Implementation 
+### ZKP Implementation
 
 The implementation uses:
 
-- **JSON Proof Tokens (JPT)**: Extended JWT format with selective disclosure capabilities
-- **BBS+ Signatures**: For advanced cryptographic proofs (simulated in this implementation)
-- **Base64 Encoding**: For credential and presentation payloads
+-   **JSON Proof Tokens (JPT)**: Extended JWT format with selective disclosure capabilities
+-   **BBS+ Signatures**: For advanced cryptographic proofs (simulated in this implementation)
+-   **Base64 Encoding**: For credential and presentation payloads
 
 ## Advanced Implementation
 
 For detailed information on:
 
-- The full implementation details: See [IOTA_ZKP_Selective_Disclosure.md](./IOTA_ZKP_Selective_Disclosure.md)
-- The verification process: See [Verification_Process.md](./Verification_Process.md)
+-   The full implementation details: See [IOTA_ZKP_Selective_Disclosure.md](./IOTA_ZKP_Selective_Disclosure.md)
+-   The verification process: See [Verification_Process.md](./Verification_Process.md)
 
 ## Dependencies
 
-- `@iota/identity-wasm`: IOTA Identity WASM bindings
-- `typescript`: TypeScript compiler
-- `ts-node`: TypeScript execution environment
+-   `@iota/identity-wasm`: IOTA Identity WASM bindings
+-   `typescript`: TypeScript compiler
+-   `ts-node`: TypeScript execution environment
 
 ## License
 

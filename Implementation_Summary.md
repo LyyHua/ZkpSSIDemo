@@ -5,30 +5,34 @@ We have successfully implemented a comprehensive Zero-Knowledge Proof (ZKP) demo
 ### Implemented Components
 
 1. **Shared Utilities**
-   - Dynamic WASM module loading
-   - Base64 encoding/decoding functions
-   - DID creation and parsing functions
-   - Random nonce generation
+
+    - Dynamic WASM module loading
+    - Base64 encoding/decoding functions
+    - DID creation and parsing functions
+    - Random nonce generation
 
 2. **Basic ZKP Implementation**
-   - Standard W3C credential creation
-   - Selective disclosure presentation format
-   - Verifier implementation with nonce validation
+
+    - Standard W3C credential creation
+    - Selective disclosure presentation format
+    - Verifier implementation with nonce validation
 
 3. **Advanced BBS+ Implementation**
-   - BBS+ signature simulation
-   - Complex credential attributes
-   - Advanced selective disclosure
+
+    - BBS+ signature simulation
+    - Complex credential attributes
+    - Advanced selective disclosure
 
 4. **Real-World Examples**
-   - Age verification without revealing birth date
-   - Health credential with selective disclosure
+
+    - Age verification without revealing birth date
+    - Health credential with selective disclosure
 
 5. **Documentation**
-   - Flow diagrams
-   - Detailed technical explanations
-   - Use case scenarios
-   - Technical glossary
+    - Flow diagrams
+    - Detailed technical explanations
+    - Use case scenarios
+    - Technical glossary
 
 ### Key Achievements
 

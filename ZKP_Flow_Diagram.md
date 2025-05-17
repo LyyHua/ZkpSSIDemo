@@ -18,11 +18,11 @@
        │                          │                          │
        │                          │  4. Receive Credential   │
        │                          │                          │
-       │                          │  5. Decide which         │                          
+       │                          │  5. Decide which         │
        │                          │     attributes to        │
        │                          │     selectively disclose │
        │                          │                          │
-       │                          │                    6. Present    
+       │                          │                    6. Present
        │                          │                       Challenge Nonce
        │                          │<─────────────────────────────────│
        │                          │                          │
@@ -102,41 +102,43 @@
 ## Credential and Presentation Format
 
 ### Standard W3C Verifiable Credential
+
 ```json
 {
-  "@context": ["https://www.w3.org/2018/credentials/v1"],
-  "id": "https://example.com/credentials/123",
-  "type": ["VerifiableCredential"],
-  "credentialSubject": {
-    "id": "did:iota:holder:abc123",
-    "given_name": "John",
-    "family_name": "Doe",
-    "email": "john.doe@example.com",
-    "age": 42
-  },
-  "issuer": "did:iota:issuer:def456",
-  "issuanceDate": "2025-05-18T12:34:56Z",
-  "proof": {
-    "type": "Ed25519Signature2018",
-    "created": "2025-05-18T12:34:56Z",
-    "proofPurpose": "assertionMethod",
-    "verificationMethod": "did:iota:issuer:def456#key-1",
-    "jws": "eyJhbGciOiJFZERTQSJ9..signature"
-  }
+    "@context": ["https://www.w3.org/2018/credentials/v1"],
+    "id": "https://example.com/credentials/123",
+    "type": ["VerifiableCredential"],
+    "credentialSubject": {
+        "id": "did:iota:holder:abc123",
+        "given_name": "John",
+        "family_name": "Doe",
+        "email": "john.doe@example.com",
+        "age": 42
+    },
+    "issuer": "did:iota:issuer:def456",
+    "issuanceDate": "2025-05-18T12:34:56Z",
+    "proof": {
+        "type": "Ed25519Signature2018",
+        "created": "2025-05-18T12:34:56Z",
+        "proofPurpose": "assertionMethod",
+        "verificationMethod": "did:iota:issuer:def456#key-1",
+        "jws": "eyJhbGciOiJFZERTQSJ9..signature"
+    }
 }
 ```
 
 ### ZKP Selective Disclosure Presentation
+
 ```json
 {
-  "payloads": [
-    null,               // family_name hidden
-    "Sm9obg==",         // given_name: "John" (base64)
-    null,               // email hidden
-    "NDI="              // age: 42 (base64)
-  ],
-  "issuer": "eyJpc3MiOiJkaWQ6aW90YT...", // Base64 encoded issuer metadata
-  "proof": "LJMiN6caEqShMJ5jPNts8O...",  // Cryptographic proof
-  "presentation": "eyJub25jZSI6InVU..."  // Base64 encoded presentation with nonce
+    "payloads": [
+        null, // family_name hidden
+        "Sm9obg==", // given_name: "John" (base64)
+        null, // email hidden
+        "NDI=" // age: 42 (base64)
+    ],
+    "issuer": "eyJpc3MiOiJkaWQ6aW90YT...", // Base64 encoded issuer metadata
+    "proof": "LJMiN6caEqShMJ5jPNts8O...", // Cryptographic proof
+    "presentation": "eyJub25jZSI6InVU..." // Base64 encoded presentation with nonce
 }
 ```

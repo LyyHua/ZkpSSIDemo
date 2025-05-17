@@ -308,10 +308,10 @@ Our implementation successfully creates:
 
 ### Key Components
 
-- **Dynamic Module Loading**: We load the IOTA Identity WASM module dynamically using `require.resolve` and `import()` to handle module resolution correctly at runtime.
-- **Base64 Encoding**: For selective disclosure payloads (IOTA-style format).
-- **Null Payloads**: For attributes that should remain hidden from the verifier.
-- **JWT-like Structure**: For issuer and presentation information in the IOTA format.
+-   **Dynamic Module Loading**: We load the IOTA Identity WASM module dynamically using `require.resolve` and `import()` to handle module resolution correctly at runtime.
+-   **Base64 Encoding**: For selective disclosure payloads (IOTA-style format).
+-   **Null Payloads**: For attributes that should remain hidden from the verifier.
+-   **JWT-like Structure**: For issuer and presentation information in the IOTA format.
 
 ## Sample Output
 
@@ -361,8 +361,9 @@ Our implementation successfully creates:
 ## Selective Disclosure Explained
 
 The ZKP approach allows the holder to reveal only specific attributes:
-- **Revealed**: given_name (John), age (42)  
-- **Hidden**: family_name, email
+
+-   **Revealed**: given_name (John), age (42)
+-   **Hidden**: family_name, email
 
 This demonstrates true zero-knowledge principles where the holder can prove possession of valid information without revealing all of it.
 

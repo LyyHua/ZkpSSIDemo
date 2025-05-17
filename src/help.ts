@@ -43,12 +43,12 @@ src/
 
 For more information, please refer to the documentation files.
 =====================================================
-`);
+`)
 }
 
 // If this script is run directly
 if (require.main === module) {
-    printHelp();
+    printHelp()
 }
 
-export { printHelp };
+export { printHelp }
