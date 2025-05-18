@@ -1,9 +1,0 @@
-/**
- * IOTA Identity Selective Disclosure Example
- * 
- * This file serves as an entry point for the ZKP example.
- * It redirects to the main.ts file which handles example selection.
- */
-
-// Import the main file
-import './main';
