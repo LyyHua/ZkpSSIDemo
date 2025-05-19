@@ -1,6 +1,7 @@
 {
   "name": "zkpahh",
   "version": "1.0.0",
+  "description": "Zero-Knowledge Proof implementation with IOTA Identity for selective disclosure of verifiable credentials",
   "main": "dist/main.js",
   "scripts": {
     "build": "npx tsc --skipLibCheck",
@@ -14,12 +15,19 @@
     "dev:real": "npx tsc --skipLibCheck && node dist/main.js real",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "IOTA",
+    "Identity",
+    "ZKP",
+    "zero-knowledge",
+    "BBS+",
+    "selective-disclosure",
+    "verifiable-credentials"
+  ],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "@iota/identity-wasm": "^1.5.1",
+    "@iota/identity-wasm": "^1.6.0-alpha.7",
     "@iota/iota-sdk": "^1.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
@@ -27,5 +35,8 @@
   "devDependencies": {
     "@types/node": "^22.15.18",
     "cross-env": "^7.0.3"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }

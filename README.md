@@ -8,9 +8,9 @@ Self-Sovereign Identity (SSI) is a model where individuals control their digital
 
 This project provides three implementations:
 
-1. **Real Implementation** - Uses the actual IOTA Identity WASM library for ZKP with BBS+ signatures (requires network connectivity)
-2. **Advanced Implementation** - Uses IOTA Identity classes but simulates network interactions
-3. **Simple Simulation** - A simplified approach for concept demonstration
+1. **Real Implementation** (`zkp-implementation.ts`) - Uses the actual IOTA Identity WASM library for ZKP with BBS+ signatures without requiring network connectivity
+2. **Advanced Network Implementation** (`zkp-advanced.ts`) - Enhanced implementation with simulated network connectivity and advanced features
+3. **Simple Simulation** (`zkp-simple.ts`) - A simplified approach for concept demonstration
 
 ## Getting Started
 
@@ -32,43 +32,63 @@ npm install
 # Build the project
 npm run build
 
-# Run the real implementation (requires network connectivity)
+# Run the real implementation
 npm run start:real
 
-# Run the advanced implementation (uses IOTA Identity classes)
+# Run the advanced network implementation
 npm run start:advanced
 
 # Run the simple simulation
 npm run start:simulation
 ```
 
-## Implementation Details
+## Advanced Network Implementation
 
-### Real ZKP Implementation
+The advanced implementation in `zkp-advanced.ts` demonstrates a sophisticated approach with:
 
-The real implementation uses the full IOTA Identity WASM library to:
+```bash
+npm run start:advanced
+```
 
-1. Create a DID for an issuer
-2. Generate BLS12-381 keys for BBS+ signatures
-3. Issue a verifiable credential with a BBS+ signature as a JPT
-4. Selectively disclose parts of the credential
-5. Create a presentation with a challenge
-6. Verify the presentation
+**Key Features:**
 
-This implementation requires actual network connectivity.
+-   **Network Connectivity Simulation**: Simulates connecting to the Shimmer testnet with retry logic
+-   **Multiple Credentials**: Creates and manages three different credential types (University Degree, ID Card, Employment)
+-   **Complex Selective Disclosure**: Advanced patterns for hiding specific fields
+-   **Secure Transmission Simulation**: Demonstrates how credentials would be transmitted in a real system
+-   **Cross-credential Verification**: Verifies information across multiple credentials
+-   **Enhanced Security Features**:
+    -   Challenge-based anti-replay protection
+    -   Network-based issuer resolution
+    -   Revocation simulation
+    -   Service endpoints
+    -   Error handling
 
-### Advanced ZKP Implementation
+This implementation accurately represents how a real-world ZKP solution would function with:
 
-The advanced implementation uses actual IOTA Identity classes but simulates network interactions:
+```typescript
+// Network configuration
+const NETWORK_URL = "https://api.testnet.shimmer.network" // Your target network URL
+const IOTA_IDENTITY_PKG_ID = 2 // Identity package ID for your network
+```
 
-1. Uses IotaDocument, Credential, and other classes from the IOTA Identity library
-2. Creates a real BLS verification method using ProofAlgorithm.BLS12381_SHA256
-3. Demonstrates the selective disclosure flow with SelectiveDisclosurePresentation
-4. Works without requiring network connectivity
+## Basic Implementation
 
-### Simple Simulation
+The standard implementation demonstrates a complete ZKP solution without network connectivity:
 
-A very basic implementation for demonstration purposes that shows the concept without using actual IOTA Identity APIs.
+```bash
+npm run start:real
+```
+
+This implementation focuses on the core ZKP operations with a single credential.
+
+## Simple Simulation
+
+A very basic implementation for demonstration purposes that shows the concept without using actual IOTA Identity APIs:
+
+```bash
+npm run start:simulation
+```
 
 ## BBS+ Signatures and Zero-Knowledge Proofs
 
@@ -83,7 +103,7 @@ BBS+ signatures are a cryptographic mechanism that allows for selective disclosu
 
 -   `src/main.ts` - Entry point for running examples
 -   `src/example/zkp-implementation.ts` - Real implementation using IOTA Identity WASM
--   `src/example/zkp-advanced.ts` - Advanced implementation using IOTA Identity classes
+-   `src/example/zkp-advanced.ts` - Advanced implementation with network features and multiple credentials
 -   `src/example/zkp-simple.ts` - Simplified simulation approach
 -   `src/util-simple.ts` - Utility functions
 
