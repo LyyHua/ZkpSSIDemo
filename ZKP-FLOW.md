@@ -66,6 +66,10 @@ The W3C Trust Triangle represents the trust relationships between these three en
 
 Key aspects of this trust relationship:
 
+![IOTA Trust Triangle](https://blog.iota.org/content/images/size/w1000/2025/03/-1274_IOTA_Identity_Blogpost-inner-graphic-01.png)
+
+The trust triangle demonstrates how:
+
 1. **Issuer → Holder**: The issuer creates a credential containing claims about the holder and cryptographically signs it.
 2. **Holder → Verifier**: The holder presents selective information from their credentials to the verifier.
 3. **Verifier → Issuer**: The verifier trusts the issuer's attestations by validating their signature.
