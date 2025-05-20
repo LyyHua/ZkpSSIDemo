@@ -5,11 +5,11 @@ This document explains the Zero-Knowledge Proof (ZKP) implementation using IOTA 
 ## Table of Contents
 
 1. [Overview of the SSI Ecosystem](#overview-of-the-ssi-ecosystem)
-   - [The W3C Trust Triangle](#the-w3c-trust-triangle)
-   - [Decentralized Identifiers (DIDs)](#decentralized-identifiers-dids)
-   - [DID Documents](#did-documents)
-   - [Public/Private Key Relationships](#publicprivate-key-relationships)
-   - [Where ZKP Fits in the SSI Model](#where-zkp-fits-in-the-ssi-model)
+    - [The W3C Trust Triangle](#the-w3c-trust-triangle)
+    - [Decentralized Identifiers (DIDs)](#decentralized-identifiers-dids)
+    - [DID Documents](#did-documents)
+    - [Public/Private Key Relationships](#publicprivate-key-relationships)
+    - [Where ZKP Fits in the SSI Model](#where-zkp-fits-in-the-ssi-model)
 2. [Step 1: Creating Issuer Identity](#step-1-creating-issuer-identity)
 3. [Step 2: Creating and Signing Credentials](#step-2-creating-and-signing-credentials)
 4. [Step 3: Issuer Sends Credential to Holder](#step-3-issuer-sends-credential-to-holder)
@@ -74,12 +74,13 @@ Key aspects of this trust relationship:
 
 Decentralized Identifiers (DIDs) are a fundamental component of SSI. They are:
 
-- **Globally unique identifiers** that don't require a centralized registry
-- **Persistent** and don't change over time
-- **Resolvable** to DID documents containing verification methods
-- **Cryptographically verifiable** and controlled by the DID subject
+-   **Globally unique identifiers** that don't require a centralized registry
+-   **Persistent** and don't change over time
+-   **Resolvable** to DID documents containing verification methods
+-   **Cryptographically verifiable** and controlled by the DID subject
 
 A DID looks like this:
+
 ```
 did:iota:0x123456789abcdef...
   ^    ^         ^
@@ -96,44 +97,40 @@ In the IOTA Identity framework, DIDs are stored on the IOTA Tangle (distributed 
 
 A DID Document is a JSON-LD document that contains information associated with a DID, including:
 
-- **Verification Methods**: Public keys used for authentication and authorization
-- **Services**: Endpoints where the DID subject can be contacted or interacted with
-- **Authentication Methods**: References to verification methods for authentication
-- **Assertion Methods**: References to verification methods for making assertions
+-   **Verification Methods**: Public keys used for authentication and authorization
+-   **Services**: Endpoints where the DID subject can be contacted or interacted with
+-   **Authentication Methods**: References to verification methods for authentication
+-   **Assertion Methods**: References to verification methods for making assertions
 
 Example DID Document structure:
 
 ```json
 {
-  "@context": "https://www.w3.org/ns/did/v1",
-  "id": "did:iota:0x123456789abcdef...",
-  "verificationMethod": [
-    {
-      "id": "did:iota:0x123456789abcdef...#key-1",
-      "type": "Ed25519VerificationKey2018",
-      "controller": "did:iota:0x123456789abcdef...",
-      "publicKeyMultibase": "z28Kp7P9...DQk"
-    },
-    {
-      "id": "did:iota:0x123456789abcdef...#key-2",
-      "type": "BLS12381G2Key2020",
-      "controller": "did:iota:0x123456789abcdef...",
-      "publicKeyMultibase": "zUC7LTaPw...JWN"
-    }
-  ],
-  "authentication": [
-    "did:iota:0x123456789abcdef...#key-1"
-  ],
-  "assertionMethod": [
-    "did:iota:0x123456789abcdef...#key-2"
-  ],
-  "service": [
-    {
-      "id": "did:iota:0x123456789abcdef...#linked-domain",
-      "type": "LinkedDomains",
-      "serviceEndpoint": "https://example.com"
-    }
-  ]
+    "@context": "https://www.w3.org/ns/did/v1",
+    "id": "did:iota:0x123456789abcdef...",
+    "verificationMethod": [
+        {
+            "id": "did:iota:0x123456789abcdef...#key-1",
+            "type": "Ed25519VerificationKey2018",
+            "controller": "did:iota:0x123456789abcdef...",
+            "publicKeyMultibase": "z28Kp7P9...DQk"
+        },
+        {
+            "id": "did:iota:0x123456789abcdef...#key-2",
+            "type": "BLS12381G2Key2020",
+            "controller": "did:iota:0x123456789abcdef...",
+            "publicKeyMultibase": "zUC7LTaPw...JWN"
+        }
+    ],
+    "authentication": ["did:iota:0x123456789abcdef...#key-1"],
+    "assertionMethod": ["did:iota:0x123456789abcdef...#key-2"],
+    "service": [
+        {
+            "id": "did:iota:0x123456789abcdef...#linked-domain",
+            "type": "LinkedDomains",
+            "serviceEndpoint": "https://example.com"
+        }
+    ]
 }
 ```
 
@@ -142,22 +139,25 @@ Example DID Document structure:
 In the SSI model, cryptographic key pairs are essential:
 
 1. **Private Keys**:
-   - Stored securely by the entity (never shared)
-   - Used to sign credentials, presentations, and DID operations
-   - Controlled solely by the DID subject
-   - Can be rotated and revoked if compromised
+
+    - Stored securely by the entity (never shared)
+    - Used to sign credentials, presentations, and DID operations
+    - Controlled solely by the DID subject
+    - Can be rotated and revoked if compromised
 
 2. **Public Keys**:
-   - Published in the DID Document
-   - Used by others to verify signatures
-   - Different types for different purposes (authentication, assertion, etc.)
-   - Can be associated with different verification methods
+    - Published in the DID Document
+    - Used by others to verify signatures
+    - Different types for different purposes (authentication, assertion, etc.)
+    - Can be associated with different verification methods
 
 Key types in our implementation:
-- **Ed25519**: Fast, secure signing for general operations
-- **BLS12381**: Enables advanced cryptographic operations needed for ZKPs and selective disclosure
+
+-   **Ed25519**: Fast, secure signing for general operations
+-   **BLS12381**: Enables advanced cryptographic operations needed for ZKPs and selective disclosure
 
 The relationship looks like:
+
 ```
 ┌───────────────┐              ┌───────────────┐
 │  Private Key  │              │  Public Key   │
@@ -182,13 +182,14 @@ Zero-Knowledge Proofs (ZKPs) are a cryptographic method that enables a party to 
 Traditional digital signatures have an "all-or-nothing" property - either you show the entire signed document or you can't verify the signature at all. This creates a privacy issue in SSI, where credentials often contain more information than necessary for a specific verification scenario.
 
 For example, a university degree credential might include:
-- Full name
-- Date of birth
-- Degree type
-- Graduation date
-- GPA
-- Student ID
-- Courses completed
+
+-   Full name
+-   Date of birth
+-   Degree type
+-   Graduation date
+-   GPA
+-   Student ID
+-   Courses completed
 
 For many verification scenarios, only a subset of this information is needed (e.g., just proving you have a degree without revealing your GPA).
 
@@ -202,56 +203,62 @@ The IOTA Identity framework uses BBS+ signatures, which have these key propertie
 4. **Unlinkability**: Presentations derived from the same credential are unlinkable
 
 The mathematical properties of BBS+ signatures rely on pairing-friendly elliptic curves (specifically BLS12-381) and involve:
-- Commitment schemes
-- Bilinear pairings
-- Mathematical transformations that preserve verification properties
+
+-   Commitment schemes
+-   Bilinear pairings
+-   Mathematical transformations that preserve verification properties
 
 #### ZKP Integration Points in the SSI Flow
 
 1. **During Credential Issuance**:
-   - The issuer must use the BLS12381_SHA256 algorithm for creating verification methods
-   - Credentials are structured as a set of discrete claims that can be individually revealed or concealed
-   - Each attribute in the credential is encoded separately in the signing process
-   - The signature binds all attributes together cryptographically
+
+    - The issuer must use the BLS12381_SHA256 algorithm for creating verification methods
+    - Credentials are structured as a set of discrete claims that can be individually revealed or concealed
+    - Each attribute in the credential is encoded separately in the signing process
+    - The signature binds all attributes together cryptographically
 
 2. **During Credential Storage**:
-   - The holder stores the complete credential with all attributes
-   - The holder also stores the cryptographic material needed to create selective disclosures later
-   - No special processing is needed at this stage
+
+    - The holder stores the complete credential with all attributes
+    - The holder also stores the cryptographic material needed to create selective disclosures later
+    - No special processing is needed at this stage
 
 3. **Between Holder and Verifier**:
-   - When the holder receives a presentation request from a verifier, they can:
-     - Decide which claims to reveal and which to conceal using the `concealInSubject()` method
-     - Create a selective disclosure presentation that contains:
-       - Revealed attributes in plaintext
-       - Hidden attributes as "null" values
-       - Cryptographic proof that hidden attributes were part of the original signed credential
-     - Include a response to the verifier's challenge to prevent replay attacks
+
+    - When the holder receives a presentation request from a verifier, they can:
+        - Decide which claims to reveal and which to conceal using the `concealInSubject()` method
+        - Create a selective disclosure presentation that contains:
+            - Revealed attributes in plaintext
+            - Hidden attributes as "null" values
+            - Cryptographic proof that hidden attributes were part of the original signed credential
+        - Include a response to the verifier's challenge to prevent replay attacks
 
 4. **During Verification**:
-   - The verifier can cryptographically verify that:
-     - All claims (both revealed and concealed) were part of the original credential
-     - The issuer's signature is valid over the entire credential
-     - The holder has not tampered with any information
-     - The challenge was correctly incorporated in the proof
-     - All this without seeing the concealed claims!
+    - The verifier can cryptographically verify that:
+        - All claims (both revealed and concealed) were part of the original credential
+        - The issuer's signature is valid over the entire credential
+        - The holder has not tampered with any information
+        - The challenge was correctly incorporated in the proof
+        - All this without seeing the concealed claims!
 
 #### ZKP Capabilities in IOTA Identity
 
 The IOTA Identity framework's implementation of ZKP provides several advanced features:
 
 1. **Fine-grained selective disclosure**:
-   - Select specific fields in a credential (e.g., `"name"`)
-   - Select nested properties (e.g., `"degree.type"`)
-   - Select specific array elements (e.g., `"mainCourses[0]"`)
+
+    - Select specific fields in a credential (e.g., `"name"`)
+    - Select nested properties (e.g., `"degree.type"`)
+    - Select specific array elements (e.g., `"mainCourses[0]"`)
 
 2. **Predicate proofs** (planned feature):
-   - Prove statements about attributes without revealing them
-   - Examples: "Age is over 21", "GPA is above 3.0", "Salary is within range X-Y"
+
+    - Prove statements about attributes without revealing them
+    - Examples: "Age is over 21", "GPA is above 3.0", "Salary is within range X-Y"
 
 3. **Cross-credential proofs** (planned feature):
-   - Create proofs that span multiple credentials
-   - Example: Prove you have a degree AND a driver's license without revealing all details
+    - Create proofs that span multiple credentials
+    - Example: Prove you have a degree AND a driver's license without revealing all details
 
 This diagram illustrates where ZKP fits in the SSI flow:
 
@@ -302,8 +309,8 @@ const selectiveDisclosurePresentation = new SelectiveDisclosurePresentation(
 // Conceal specific fields - this is the core of ZKP!
 // Only reveal name, degree type, and first course
 selectiveDisclosurePresentation.concealInSubject("mainCourses[1]") // Hide second course
-selectiveDisclosurePresentation.concealInSubject("degree.name")    // Hide degree name
-selectiveDisclosurePresentation.concealInSubject("GPA")           // Hide GPA
+selectiveDisclosurePresentation.concealInSubject("degree.name") // Hide degree name
+selectiveDisclosurePresentation.concealInSubject("GPA") // Hide GPA
 
 // Create presentation with cryptographic proof
 const presentationJpt = await issuerDoc.createPresentationJpt(
