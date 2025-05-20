@@ -68,11 +68,11 @@ export async function zkp() {
 
         // Create the subject for the credential
         const subject = {
-            name: "Alice",
-            mainCourses: ["Object-oriented Programming", "Mathematics"],
+            name: "Hứa Văn Lý",
+            mainCourses: ["Software Engineering", "System Modeling"],
             degree: {
                 type: "BachelorDegree",
-                name: "Bachelor of Science and Arts",
+                name: "Bachelor of Software Engineering",
             },
             GPA: 4.0,
         }
@@ -233,13 +233,13 @@ export async function zkp() {
 
         // Display what the verifier actually sees - only the disclosed fields
         const visibleCredential = {
-            name: "Alice",
-            mainCourses: ["Object-oriented Programming"], // Mathematics is concealed
+            name: "Hứa Văn Lý",
+            mainCourses: ["Software Engineering"], // Mathematics is concealed
             degree: {
                 type: "BachelorDegree",
                 // name is concealed
             },
-            GPA: 4.0,
+            GPA: 3.34,
         }
 
         console.log("\nVerifier's view of credential (with concealed fields):")
