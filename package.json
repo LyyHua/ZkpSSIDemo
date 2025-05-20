@@ -9,10 +9,12 @@
     "start:simulation": "node dist/main.js simulation",
     "start:advanced": "node dist/main.js advanced",
     "start:real": "node dist/main.js real",
+    "start:local": "node dist/main.js local",
     "dev": "npx tsc --skipLibCheck && node dist/main.js",
     "dev:simulation": "npx tsc --skipLibCheck && node dist/main.js simulation",
     "dev:advanced": "npx tsc --skipLibCheck && node dist/main.js advanced",
     "dev:real": "npx tsc --skipLibCheck && node dist/main.js real",
+    "dev:local": "npx tsc --skipLibCheck && node dist/main.js local",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

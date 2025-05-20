@@ -8,9 +8,16 @@ Self-Sovereign Identity (SSI) is a model where individuals control their digital
 
 This project provides three implementations:
 
-1. **Real Implementation** (`zkp-implementation.ts`) - Uses the actual IOTA Identity WASM library for ZKP with BBS+ signatures without requiring network connectivity
-2. **Advanced Network Implementation** (`zkp-advanced.ts`) - Enhanced implementation with simulated network connectivity and advanced features
+1. **Real Implementation** (`zkp.ts`) - Uses the actual IOTA Identity WASM library for ZKP with BBS+ signatures with network connectivity
+2. **Offline Implementation** (`zkp-local.ts`) - A complete implementation that works without network connectivity
 3. **Simple Simulation** (`zkp-simple.ts`) - A simplified approach for concept demonstration
+
+## Documentation
+
+The project includes comprehensive documentation:
+
+-   **[ZKP-FLOW.md](ZKP-FLOW.md)** - Detailed explanation of the ZKP flow and where it fits in the SSI ecosystem
+-   **[ZKP-SYSTEM-MODELING.md](ZKP-SYSTEM-MODELING.md)** - System modeling perspectives using UML, SysML, and architectural descriptions
 
 ## Getting Started
 
@@ -32,55 +39,41 @@ npm install
 # Build the project
 npm run build
 
-# Run the real implementation
-npm run start:real
+# Run the real implementation (requires network)
+npm run start
 
-# Run the advanced network implementation
-npm run start:advanced
+# Run the offline implementation
+npm run start:local
 
 # Run the simple simulation
 npm run start:simulation
 ```
 
-## Advanced Network Implementation
+## Network Implementation
 
-The advanced implementation in `zkp-advanced.ts` demonstrates a sophisticated approach with:
+The network implementation in `zkp.ts` demonstrates a sophisticated approach with:
 
 ```bash
-npm run start:advanced
+npm run start
 ```
 
 **Key Features:**
 
--   **Network Connectivity Simulation**: Simulates connecting to the Shimmer testnet with retry logic
--   **Multiple Credentials**: Creates and manages three different credential types (University Degree, ID Card, Employment)
+-   **Network Connectivity**: Connects to the IOTA network to publish and resolve DIDs
+-   **BBS+ Signatures**: Uses BBS+ signatures for ZKP capabilities
 -   **Complex Selective Disclosure**: Advanced patterns for hiding specific fields
--   **Secure Transmission Simulation**: Demonstrates how credentials would be transmitted in a real system
--   **Cross-credential Verification**: Verifies information across multiple credentials
--   **Enhanced Security Features**:
-    -   Challenge-based anti-replay protection
-    -   Network-based issuer resolution
-    -   Revocation simulation
-    -   Service endpoints
-    -   Error handling
+-   **Challenge-Response**: Challenge-based anti-replay protection
+-   **DID Resolution**: Network-based issuer resolution
 
-This implementation accurately represents how a real-world ZKP solution would function with:
+## Offline Implementation
 
-```typescript
-// Network configuration
-const NETWORK_URL = "https://api.testnet.shimmer.network" // Your target network URL
-const IOTA_IDENTITY_PKG_ID = 2 // Identity package ID for your network
-```
-
-## Basic Implementation
-
-The standard implementation demonstrates a complete ZKP solution without network connectivity:
+The offline implementation provides a complete ZKP solution without requiring network connectivity:
 
 ```bash
-npm run start:real
+npm run start:local
 ```
 
-This implementation focuses on the core ZKP operations with a single credential.
+This implementation focuses on the core ZKP operations with a single credential, making it perfect for learning and testing purposes.
 
 ## Simple Simulation
 
@@ -102,10 +95,13 @@ BBS+ signatures are a cryptographic mechanism that allows for selective disclosu
 ## Project Structure
 
 -   `src/main.ts` - Entry point for running examples
--   `src/example/zkp-implementation.ts` - Real implementation using IOTA Identity WASM
--   `src/example/zkp-advanced.ts` - Advanced implementation with network features and multiple credentials
--   `src/example/zkp-simple.ts` - Simplified simulation approach
--   `src/util-simple.ts` - Utility functions
+-   `src/zkp.ts` - Network-connected implementation using IOTA Identity WASM
+-   `src/zkp-local.ts` - Offline implementation of ZKP features
+-   `src/zkp-simple.ts` - Simplified simulation approach
+-   `src/util.ts` - Utility functions for network operations
+-   `src/util-simple.ts` - Utility functions for offline operations
+-   `ZKP-FLOW.md` - Detailed documentation of the ZKP process
+-   `ZKP-SYSTEM-MODELING.md` - System modeling of ZKP architecture
 
 ## License
 
