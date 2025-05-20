@@ -19,7 +19,7 @@ This document explains the Zero-Knowledge Proof (ZKP) implementation using IOTA 
 8. [Step 7: Holder Creates Presentation JWT](#step-7-holder-creates-presentation-jwt)
 9. [Step 8: Holder Sends Presentation to Verifier](#step-8-holder-sends-presentation-to-verifier)
 10. [Step 9: Verifier Validates the Presentation](#step-9-verifier-validates-the-presentation)
-11. [Understanding JWT/JPT Payloads](#understanding-jwtjpt-payloads)
+
 
 ## Overview of the SSI Ecosystem
 
@@ -52,7 +52,7 @@ The W3C Trust Triangle represents the trust relationships between these three en
 │      HOLDER       │         │     VERIFIER      │
 │                   │    2.   │                   │
 │ - Stores VCs      │ Present │ - Validates       │
-│ - Controls        │ Selective│  presentations    │
+│ - Controls        │Selective│  presentations    │
 │   disclosure      │  Data   │ - Checks issuer   │
 │ - Creates         │ ──────> │   signatures      │
 │   presentations   │         │ - Trusts issuer   │
@@ -281,7 +281,7 @@ This diagram illustrates where ZKP fits in the SSI flow:
          │                          │    challenge             │
          │                          │                          │
          │                          │ 5. Creates ZKP with      │
-         │                          │    selective disclosure   │
+         │                          │    selective disclosure  │
          │                          │    (THIS IS WHERE ZKP    │
          │                          │     HAPPENS!)            │
          │                          │                          │
@@ -296,39 +296,7 @@ This diagram illustrates where ZKP fits in the SSI flow:
          │                          │                          │
 ```
 
-#### Example Code for ZKP in IOTA Identity
 
-Here's a code example showing how selective disclosure is implemented:
-
-```typescript
-// Create selective disclosure presentation from credential
-const selectiveDisclosurePresentation = new SelectiveDisclosurePresentation(
-    decodedCredential.decodedJwp()
-)
-
-// Conceal specific fields - this is the core of ZKP!
-// Only reveal name, degree type, and first course
-selectiveDisclosurePresentation.concealInSubject("mainCourses[1]") // Hide second course
-selectiveDisclosurePresentation.concealInSubject("degree.name") // Hide degree name
-selectiveDisclosurePresentation.concealInSubject("GPA") // Hide GPA
-
-// Create presentation with cryptographic proof
-const presentationJpt = await issuerDoc.createPresentationJpt(
-    selectiveDisclosurePresentation,
-    methodId,
-    presentationOptions
-)
-```
-
-The resulting presentation JWT will contain only the revealed information while still being cryptographically verifiable against the issuer's signature.
-
-#### ZKP Benefits in the SSI Model
-
-1. **Enhanced privacy**: Individuals share only what's necessary
-2. **Reduced data exposure**: Minimizes risk of data leaks
-3. **Compliance with regulations**: Supports data minimization principles (GDPR, etc.)
-4. **Trust preservation**: Maintains the issuer's attestation without requiring their involvement
-5. **Selective reputation**: Present different aspects of your credentials in different contexts
 
 ## Step 1: Creating Issuer Identity
 
@@ -371,18 +339,18 @@ The issuer creates a credential with subject data and signs it using BBS+ signat
 ```typescript
 // Create credential subject
 const subject = {
-    name: "Alice",
-    mainCourses: ["Object-oriented Programming", "Mathematics"],
+    name: "Hứa Văn Lý",
+    mainCourses: ["Software Engineering", "System Modeling"],
     degree: {
         type: "BachelorDegree",
-        name: "Bachelor of Science and Arts",
+        name: "Bachelor of Software Engineering",
     },
-    GPA: 4.0,
+    GPA: 3.34,
 }
 
 // Build credential using the subject and issuer
 const credential = new Credential({
-    id: "https:/example.edu/credentials/3732",
+    id: "https:/uit.edu.vn/credentials/3732",
     issuer: issuerDocument.id(),
     type: "UniversityDegreeCredential",
     credentialSubject: subject,
@@ -406,6 +374,34 @@ const decodedJpt = JptCredentialValidator.validate(
 ```
 
 The credential JWT (JPT) is a structured token with three parts:
+
+-   Header: Contains algorithm info and claims metadata
+-   Payload: Contains the actual credential data
+-   Signature: Cryptographic proof of the credential's authenticity
+
+Example of a JWT credential payload:
+
+```json
+{
+  "iss": "did:iota:0x123456789abcdef...",
+  "sub": "did:subject:holder123",
+  "iat": 1628097029,
+  "exp": 1659633029,
+  "vc": {
+    "@context": ["https://www.w3.org/2018/credentials/v1"],
+    "type": ["VerifiableCredential", "UniversityDegreeCredential"],
+    "credentialSubject": {
+      "name": "Hứa Văn Lý",
+      "mainCourses": ["Software Engineering", "System Modeling"],
+      "degree": {
+        "type": "BachelorDegree",
+        "name": "Bachelor of Software Engineering"
+      },
+      "GPA": 3.34
+    }
+  }
+}
+```
 
 -   Header: Contains algorithm info and claims metadata
 -   Payload: Contains the actual credential data
@@ -460,7 +456,7 @@ let decodedCredential = JptCredentialValidator.validate(
 
 ## Step 5: Verifier Sends Challenge for Presentation
 
-The verifier generates a random challenge to prevent replay attacks:
+The verifier generates a unique, random challenge that the holder must incorporate into their presentation. This is a critical security mechanism to prevent replay attacks:
 
 ```typescript
 // Generate a random challenge
@@ -513,6 +509,54 @@ const presentationJptString = presentationJpt.toString()
 // Transmit presentationJptString to verifier...
 ```
 
+When decoded, a presentation JWT payload looks like:
+
+```json
+{
+    "payloads": [
+        "ImRpZDppb3RhOmNiY2Y4ZDM1OjB4Yzc0MTAzNjIzN2JiYWZhM2VmYjcwMGJmNmJkZDQ5OTBhOGRlMzZjNWVkNDdkNTFhYTVhNzQwYmMwMDFkNGRlZiI",
+        null,
+        null,
+        "Imh0dHBzOi8vd3d3LnczLm9yZy8yMDE4L2NyZWRlbnRpYWxzL3YxIg",
+        "IlZlcmlmaWFibGVDcmVkZW50aWFsIg",
+        "IlVuaXZlcnNpdHlEZWdyZWVDcmVkZW50aWFsIg",
+        "My4zNA",
+        "IkJhY2hlbG9yRGVncmVlIg",
+        null,
+        "IlNvZnR3YXJlIEVuZ2luZWVyaW5nIg",
+        null,
+        "IkhydeG4gVsSDbiBMw70i"
+    ],
+    "issuer": "eyJ0eXAiOiJKUFQiLCJhbGci...",
+    "proof": "eyJhbGciOiJCQlMtQkxTMTIzOD...",
+    "presentation": "eyJub25jZSI6IjQ3NWE3OTg..."
+}
+```
+
+### Key Components of the Presentation
+
+1. **payloads**: 
+   - This is an array format that's different from the original JSON credential because BBS+ signatures process each attribute separately.
+   - Each string is a Base64URL-encoded value, wrapped in JSON quotes, then Base64URL-encoded again. This double-encoding is a technical requirement for the IOTA Identity library's BBS+ implementation.
+   - The null values represent concealed attributes.
+
+2. **issuer**: Contains information about the issuer's DID document. This is used by the verifier to locate the public key needed to verify the signature.
+
+3. **proof**: The cryptographic BBS+ signature proof that validates the credential's authenticity. It mathematically proves that even the hidden fields were part of the original signed credential.
+
+4. **presentation**: Contains the challenge response data, proving this presentation was created specifically for this verification request. This prevents replay attacks.
+
+### Why the Different Encoding Formats?
+
+- The original credential uses a JSON format (easier for humans to read)
+- The BBS+ algorithm requires individual attributes to be processed separately to enable selective disclosure
+- The payloads array uses a specialized encoding format required by the cryptographic library
+- The double-encoding happens because:
+  1. First encoding: Each value is encoded to maintain consistent binary representation
+  2. Second encoding: The encoded values are processed by the BBS+ algorithm, which outputs Base64-encoded values
+
+This specialized format allows the cryptographic proof to work properly even when some fields are concealed.
+
 ## Step 9: Verifier Validates the Presentation
 
 The verifier resolves the issuer's DID and validates the presentation:
@@ -545,58 +589,15 @@ const decodedPresentedCredential = JptPresentationValidator.validate(
 After validation, the verifier can see only the disclosed fields:
 
 ```json
-{
-    "name": "Alice",
-    "mainCourses": ["Object-oriented Programming"],
+{    
+    "name": "Hứa Văn Lý",
+    "mainCourses": ["Software Engineering"],
     "degree": {
         "type": "BachelorDegree"
     },
-    "GPA": 4
+    "GPA": 3.34
 }
 ```
-
-## Understanding JWT/JPT Payloads
-
-The JWT payloads used in this implementation have a specific structure:
-
-1. **Credential JWT**:
-
-    - Header: Contains information about the algorithm, issuer, and claims
-    - Payload: Contains the credential data with tilde-separated fields
-    - Signature: Cryptographic signature ensuring integrity
-
-2. **Presentation JWT**:
-    - Similar structure to credential JWT
-    - Contains additional presentation header with challenge
-    - Payload has null values for concealed fields
-
-When decoded, a presentation JWT payload might look like:
-
-```json
-{
-    "payloads": [
-        "ImRpZDppb3RhOmNiY2Y4ZDM1OjB4Yzc0MTAzNjIzN2JiYWZhM2VmYjcwMGJmNmJkZDQ5OTBhOGRlMzZjNWVkNDdkNTFhYTVhNzQwYmMwMDFkNGRlZiI",
-        null,
-        null,
-        "Imh0dHBzOi8vd3d3LnczLm9yZy8yMDE4L2NyZWRlbnRpYWxzL3YxIg",
-        "IlZlcmlmaWFibGVDcmVkZW50aWFsIg",
-        "IlVuaXZlcnNpdHlEZWdyZWVDcmVkZW50aWFsIg",
-        "NA",
-        "IkJhY2hlbG9yRGVncmVlIg",
-        null,
-        "Ik9iamVjdC1vcmllbnRlZCBQcm9ncmFtbWluZyI",
-        null,
-        "IkFsaWNlIg"
-    ],
-    "issuer": "eyJ0eXAiOiJKUFQiLCJhbGci...",
-    "proof": "eyJhbGciOiJCQlMtQkxTMTIzOD...",
-    "presentation": "eyJub25jZSI6IjQ3NWE3OTg..."
-}
-```
-
-Note how concealed fields are represented by `null` values, while disclosed fields contain their base64-encoded values.
-
----
 
 The beauty of ZKP is that the verifier can cryptographically verify that:
 

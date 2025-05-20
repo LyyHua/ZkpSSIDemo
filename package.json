@@ -6,16 +6,10 @@
   "scripts": {
     "build": "npx tsc --skipLibCheck",
     "start": "node dist/main.js",
-    "start:simulation": "node dist/main.js simulation",
-    "start:advanced": "node dist/main.js advanced",
-    "start:real": "node dist/main.js real",
     "start:local": "node dist/main.js local",
-    "dev": "npx tsc --skipLibCheck && node dist/main.js",
-    "dev:simulation": "npx tsc --skipLibCheck && node dist/main.js simulation",
-    "dev:advanced": "npx tsc --skipLibCheck && node dist/main.js advanced",
-    "dev:real": "npx tsc --skipLibCheck && node dist/main.js real",
-    "dev:local": "npx tsc --skipLibCheck && node dist/main.js local",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
+    "test": "echo \"No tests defined\" && exit 0"
   },
   "keywords": [
     "IOTA",

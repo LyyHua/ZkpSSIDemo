@@ -86,9 +86,9 @@ The class diagram represents the key objects in the ZKP system and their relatio
 The sequence diagram shows the temporal interactions between system components:
 
 ```
-┌─────────┐         ┌─────────┐          ┌─────────┐
-│ Issuer  │         │ Holder  │          │Verifier │
-└────┬────┘         └────┬────┘          └────┬────┘
+┌─────────┐          ┌─────────┐          ┌─────────┐
+│ Issuer  │          │ Holder  │          │Verifier │
+└────┬────┘          └────┬────┘          └────┬────┘
      │                    │                    │
      │ 1. Create Identity │                    │
      ├───────────────────►│                    │

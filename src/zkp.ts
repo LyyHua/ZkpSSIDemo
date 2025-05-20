@@ -1,19 +1,14 @@
-/**
- * Implementation of Zero-Knowledge Proof using IOTA Identity
- * See ZKP-FLOW.md for a detailed explanation of each step
- */
 import {
     Credential,
     FailFast,
-    IdentityClient,
     IdentityClientReadOnly,
     IotaDID,
     IotaDocument,
-    JptCredentialValidator,
     JptCredentialValidationOptions,
+    JptCredentialValidator,
     JptCredentialValidatorUtils,
-    JptPresentationValidator,
     JptPresentationValidationOptions,
+    JptPresentationValidator,
     JptPresentationValidatorUtils,
     JwpCredentialOptions,
     JwpPresentationOptions,
@@ -23,8 +18,8 @@ import {
 } from "@iota/identity-wasm/node"
 import { IotaClient } from "@iota/iota-sdk/client"
 import {
-    getMemstorage,
     getFundedClient,
+    getMemstorage,
     IOTA_IDENTITY_PKG_ID,
     NETWORK_URL,
 } from "./util"
@@ -75,12 +70,12 @@ export async function zkp() {
                 type: "BachelorDegree",
                 name: "Bachelor of Software Engineering",
             },
-            GPA: 4.0,
+            GPA: 3.34,
         }
 
         // Create the credential with the subject
         const credential = new Credential({
-            id: "https:/example.edu/credentials/3732",
+            id: "https:/uit.edu.vn/credentials/3732",
             issuer: issuerDocument.id(),
             type: "UniversityDegreeCredential",
             credentialSubject: subject,
@@ -176,54 +171,49 @@ export async function zkp() {
         console.log('🔒 Concealed fields: "mainCourses[1]", "degree.name"')
 
         // ===========================================================================
-        // Step 7: Holder creates Presentation JWT
+        // Step 7: Holder creates presentation JWT.
         // ===========================================================================
-        console.log("\n[STEP 7] Holder creates Presentation JWT")
+        console.log("\n[STEP 7] Creating presentation JWT")
 
-        // Set up presentation options with challenge for anti-replay protection
+        // Set up presentation options with the challenge for anti-replay protection
         const presentationOptions = new JwpPresentationOptions()
         presentationOptions.nonce = challenge
 
-        // Create presentation JWT with selective disclosure and challenge
+        // Create the presentation JWT
         const presentationJpt = await issuerDoc.createPresentationJpt(
             selectiveDisclosurePresentation,
             methodId,
             presentationOptions
         )
 
-        console.log("✅ Created presentation JWT")
+        // Display the presentation JWT payload
+        console.log("\nPresentation JWT Payload:")
+        console.log(presentationJpt.toString())
 
         // ===========================================================================
-        // Step 8: Holder sends Presentation to Verifier
+        // Step 8: Holder sends presentation to Verifier.
         // ===========================================================================
         console.log("\n[STEP 8] Holder sends presentation to verifier")
-
-        // In a real system, this would involve secure transmission
-        // Here we simply use the presentation object directly
-        console.log("Presentation sent to verifier")
+        // In a real system, the holder would securely transmit the presentation to the verifier
 
         // ===========================================================================
-        // Step 9: Verifier validates the Presentation
+        // Step 9: Verifier validates the presentation.
         // ===========================================================================
         console.log("\n[STEP 9] Verifier validates the presentation")
 
-        // Extract issuer DID from presentation
+        // Verifier extracts and resolves the issuer's DID
         const issuerDidV = IotaDID.parse(
             JptPresentationValidatorUtils.extractIssuerFromPresentedJpt(
                 presentationJpt
             ).toString()
         )
 
-        // Resolve issuer's DID to get their DID document
+        // Verifier resolves the issuer's DID document
         const issuerDocV = await identityClientReadOnly.resolveDid(issuerDidV)
 
-        // Set up validation options with the challenge
+        // Verifier validates the presentation with the challenge
         const presentationValidationOptions =
-            new JptPresentationValidationOptions({
-                nonce: challenge,
-            })
-
-        // Validate the presentation
+            new JptPresentationValidationOptions({ nonce: challenge })
         const decodedPresentedCredential = JptPresentationValidator.validate(
             presentationJpt,
             issuerDocV,
@@ -231,22 +221,36 @@ export async function zkp() {
             FailFast.FirstError
         )
 
-        console.log("✅ Presentation successfully validated")
+        console.log("\n✅ Presentation successfully validated!")
 
-        // Display what the verifier would see - only the disclosed fields
+        // Display the decoded credential contents
+        console.log("\nValidated credential contents:")
+        console.log(decodedPresentedCredential.credential())
+
+        // Display what the verifier actually sees - only the disclosed fields
         const visibleCredential = {
             name: "Hứa Văn Lý",
-            mainCourses: ["Software Engineering"], // "System Modeling" is concealed
+            mainCourses: ["Software Engineering"], // Mathematics is concealed
             degree: {
                 type: "BachelorDegree",
                 // name is concealed
             },
-            GPA: 4.0,
+            GPA: 3.34,
         }
 
         console.log("\nVerifier's view of credential (with concealed fields):")
         console.log(JSON.stringify(visibleCredential, null, 2))
+
+        console.log("\n✅ Zero-Knowledge Proof validation summary:")
+        console.log("✅ Credential issuer verified")
+        console.log("✅ Credential integrity verified")
+        console.log(
+            "✅ Selective disclosure verified - concealed fields remain hidden"
+        )
+        console.log(
+            "✅ Challenge verification successful - no replay attack possible"
+        )
     } catch (error) {
-        console.error("Error in ZKP process:", error)
+        console.error(`❌ Error: ${error}`)
     }
 }

@@ -1,6 +1,3 @@
-// Copyright 2020-2025 IOTA Stiftung
-// SPDX-License-Identifier: Apache-2.0
-
 import {
     IdentityClient,
     IdentityClientReadOnly,
@@ -19,7 +16,6 @@ export const IOTA_IDENTITY_PKG_ID = globalThis?.process?.env?.IOTA_IDENTITY_PKG_
 export const NETWORK_NAME_FAUCET = globalThis?.process?.env?.NETWORK_NAME_FAUCET || "localnet";
 export const NETWORK_URL = globalThis?.process?.env?.NETWORK_URL || "http://127.0.0.1:9000";
 
-// No longer throw an error if IOTA_IDENTITY_PKG_ID is provided as a default value
 if (IOTA_IDENTITY_PKG_ID === "") {
     throw new Error(
         "IOTA_IDENTITY_PKG_ID env variable must be set to run the examples"

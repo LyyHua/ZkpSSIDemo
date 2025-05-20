@@ -1,23 +1,6 @@
 # IOTA Identity ZKP Implementation
 
-This project demonstrates real Zero-Knowledge Proof (ZKP) implementation using the IOTA Identity WASM library for Self-Sovereign Identity (SSI), specifically focusing on selective disclosure with BBS+ signatures.
-
-## Overview
-
-Self-Sovereign Identity (SSI) is a model where individuals control their digital identities without relying on a central authority. Zero-Knowledge Proofs with Selective Disclosure enable users to prove possession of credentials while revealing only specific attributes, preserving privacy.
-
-This project provides three implementations:
-
-1. **Real Implementation** (`zkp.ts`) - Uses the actual IOTA Identity WASM library for ZKP with BBS+ signatures with network connectivity
-2. **Offline Implementation** (`zkp-local.ts`) - A complete implementation that works without network connectivity
-3. **Simple Simulation** (`zkp-simple.ts`) - A simplified approach for concept demonstration
-
-## Documentation
-
-The project includes comprehensive documentation:
-
--   **[ZKP-FLOW.md](ZKP-FLOW.md)** - Detailed explanation of the ZKP flow and where it fits in the SSI ecosystem
--   **[ZKP-SYSTEM-MODELING.md](ZKP-SYSTEM-MODELING.md)** - System modeling perspectives using UML, SysML, and architectural descriptions
+This project demonstrates Zero-Knowledge Proof (ZKP) implementation using the IOTA Identity WASM library for Self-Sovereign Identity (SSI), specifically focusing on selective disclosure with BBS+ signatures.
 
 ## Getting Started
 
@@ -26,28 +9,77 @@ The project includes comprehensive documentation:
 -   Node.js 16+
 -   npm or yarn
 
+### Important: IOTA Network Setup
+
+**For the network-based implementation (`zkp.ts`), you need an IOTA Identity Package ID.**
+
+You have two options:
+
+1. **Use the Local/Offline Implementation**: Simply run `npm run start:local` which requires no network setup
+2. **Set up a Local IOTA Network**:
+    - Follow the [IOTA Identity Local Network Setup Guide](https://wiki.iota.org/identity.rs/getting-started/installation)
+    - Get your Package ID from the setup
+    - Update `src/util.ts` with your Package ID in the `IOTA_IDENTITY_PKG_ID` constant
+
 ### Installation
 
 ```bash
 # Install dependencies
 npm install
+
+# Build the TypeScript code
+npx tsc
 ```
 
 ### Running the Examples
 
+For quick testing without network setup:
+
 ```bash
-# Build the project
-npm run build
-
-# Run the real implementation (requires network)
-npm run start
-
-# Run the offline implementation
+# Run the offline implementation (no network required)
 npm run start:local
-
-# Run the simple simulation
-npm run start:simulation
 ```
+
+If you've set up the IOTA network and updated the Package ID:
+
+```bash
+# Run the standard implementation
+npm run start
+```
+
+## Project Overview
+
+Self-Sovereign Identity (SSI) allows individuals to control their digital identities without relying on central authorities. Zero-Knowledge Proofs with Selective Disclosure enable users to prove possession of credentials while revealing only specific attributes.
+
+This project provides two implementations:
+
+1. **Standard Implementation** (`zkp.ts`) - Uses the IOTA Identity WASM library with network connectivity
+2. **Offline Implementation** (`zkp-local.ts`) - Works without network connectivity, ideal for learning
+
+## Documentation
+
+-   **[ZKP-FLOW.md](ZKP-FLOW.md)** - Detailed explanation of the ZKP flow in the SSI ecosystem
+-   **[IMPLEMENTATION-GUIDE.md](IMPLEMENTATION-GUIDE.md)** - Technical architecture details
+-   **[ZKP-SYSTEM-MODELING.md](ZKP-SYSTEM-MODELING.md)** - System modeling diagrams
+-   **[ZKP-MODELING-REFERENCE-COMPLETE.md](ZKP-MODELING-REFERENCE-COMPLETE.md)** - Comprehensive model reference
+
+## Key Features
+
+-   **BBS+ Signatures**: Multi-message signing and selective disclosure
+-   **Zero-Knowledge Proofs**: Reveal only selected attributes
+-   **Selective Disclosure**: Fine-grained control over which credential attributes to disclose
+-   **Challenge-Response Protocol**: Anti-replay protection with verifier challenges
+
+## Project Structure
+
+-   `src/main.ts` - Entry point for running examples
+-   `src/zkp.ts` - Network-connected implementation using IOTA Identity WASM
+-   `src/zkp-local.ts` - Offline implementation of ZKP features
+-   `src/util.ts` - Utility functions for network operations
+
+## License
+
+This project is licensed under the ISC License.
 
 ## Network Implementation
 
@@ -74,14 +106,6 @@ npm run start:local
 ```
 
 This implementation focuses on the core ZKP operations with a single credential, making it perfect for learning and testing purposes.
-
-## Simple Simulation
-
-A very basic implementation for demonstration purposes that shows the concept without using actual IOTA Identity APIs:
-
-```bash
-npm run start:simulation
-```
 
 ## BBS+ Signatures and Zero-Knowledge Proofs
 

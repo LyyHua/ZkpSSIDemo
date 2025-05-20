@@ -2,10 +2,13 @@ import { zkp } from "./zkp"
 import zkpLocal from "./zkp-local"
 
 export async function main(example?: string) {
-    if (example === "local") {
-        return await zkpLocal()
-    } else {
-        return await zkp()
+    switch (example) {
+        case "local":
+            console.log("Running local ZKP implementation (offline)...")
+            return await zkpLocal()
+        default:
+            console.log("Running standard ZKP implementation...")
+            return await zkp()
     }
 }
 

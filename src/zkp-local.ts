@@ -1,23 +1,11 @@
-/**
- * IOTA Identity Zero-Knowledge Proof Example with Selective Disclosure
- *
- * This example demonstrates proper usage of IOTA Identity's
- * Zero-Knowledge Proof capabilities using JPT (JSON Proof Token)
- * with BBS+ signatures for selective disclosure
- *
- * This is a local/offline implementation that doesn't require network connectivity
- */
 import {
     Credential,
     FailFast,
-    IotaDID,
     IotaDocument,
     JptCredentialValidationOptions,
     JptCredentialValidator,
-    JptCredentialValidatorUtils,
     JptPresentationValidationOptions,
     JptPresentationValidator,
-    JptPresentationValidatorUtils,
     JwpCredentialOptions,
     JwpPresentationOptions,
     MethodScope,
@@ -39,11 +27,9 @@ function createStorage(): Storage {
  * IOTA Identity ZKP example with JPT and selective disclosure
  */
 export async function zkpLocal() {
-    console.log("=".repeat(80))
     console.log(
         "IOTA Identity Zero-Knowledge Proof Example with BBS+ Selective Disclosure"
     )
-    console.log("=".repeat(80))
 
     try {
         // ===========================================================================
@@ -86,13 +72,13 @@ export async function zkpLocal() {
             "Creating credential subject with university degree information..."
         )
         const subject = {
-            name: "Alice",
-            mainCourses: ["Object-oriented Programming", "Mathematics"],
+            name: "Hứa Văn Lý",
+            mainCourses: ["Software Engineering", "System Modeling"],
             degree: {
                 type: "BachelorDegree",
-                name: "Bachelor of Science and Arts",
+                name: "Bachelor of Software Engineering",
             },
-            GPA: 4.0,
+            GPA: 3.34,
         }
         console.log("Created subject:", JSON.stringify(subject, null, 2))
 
@@ -100,8 +86,9 @@ export async function zkpLocal() {
         console.log(
             "Building credential with subject and issuer information..."
         )
+        // Create the credential with the subject
         const credential = new Credential({
-            id: "https:/example.edu/credentials/3732",
+            id: "https:/uit.edu.vn/credentials/3732",
             issuer: issuerDocument.id(),
             type: "UniversityDegreeCredential",
             credentialSubject: subject,
@@ -264,13 +251,13 @@ export async function zkpLocal() {
 
         // Display what the verifier would see - the disclosed fields only
         const visibleCredential = {
-            name: "Alice",
-            mainCourses: ["Object-oriented Programming"], // Mathematics is concealed
+            name: "Hứa Văn Lý",
+            mainCourses: ["Software Engineering"], // System Modeling is concealed
             degree: {
                 type: "BachelorDegree",
                 // name is concealed
             },
-            GPA: 4.0,
+            GPA: 3.34,
         }
 
         console.log("\nVerifier's view of credential (with concealed fields):")
@@ -286,11 +273,9 @@ export async function zkpLocal() {
             "✅ Challenge verification successful - no replay attack possible"
         )
 
-        console.log("\n=".repeat(80))
         console.log(
             "IOTA Identity Zero-Knowledge Proof Example Completed Successfully!"
         )
-        console.log("=".repeat(80))
     } catch (error) {
         console.error(`❌ Error: ${error}`)
     }
