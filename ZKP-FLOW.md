@@ -33,6 +33,8 @@ Self-Sovereign Identity (SSI) is a model for digital identity management that gi
 
 The W3C Trust Triangle represents the trust relationships between these three entities:
 
+Key aspects of this trust relationship:
+
 ```
 ┌───────────────────┐
 │      ISSUER       │
@@ -63,8 +65,6 @@ The W3C Trust Triangle represents the trust relationships between these three en
                 3. Trust Relationship
                    (Optional direct)
 ```
-
-Key aspects of this trust relationship:
 
 ![IOTA Trust Triangle](https://blog.iota.org/content/images/size/w1000/2025/03/-1274_IOTA_Identity_Blogpost-inner-graphic-01.png)
 
