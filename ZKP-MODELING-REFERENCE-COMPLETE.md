@@ -53,7 +53,7 @@ The layered architecture view shows how ZKP fits within the enterprise SSI syste
 │  │  • SSI Wallet Applications                                              │  │
 │  │  • Verifier Portals                                                     │  │
 │  │  • Issuer Management Systems                                            │  │
-│  │  • Identity Provider Services                                           │  │
+│  │  • DID Resolver Services                                                │  │
 │  └─────────────────────────────────────────────────────────────────────────┘  │
 │                                    │                                          │
 │                                    ▼                                          │
@@ -111,8 +111,9 @@ The SABSA (Sherwood Applied Business Security Architecture) model for ZKP system
 │  │   Needs     │  │   Models    │  │   Protocols │  │   Tangle    │  │   Curves   │  │
 │  │ • Privacy   │  │ • Security  │  │ • BBS+      │  │ • Node.js   │  │ • WASM     │  │
 │  │   Laws      │  │   Policies  │  │   Schemes   │  │   Runtime   │  │   Bindings │  │
-│  │ • Compliance│  │ • Access    │  │ • Selective │  │ • Database  │  │ • Crypto   │  │
-│  │   Rules     │  │   Control   │  │   Disclosure│  │   Systems   │  │   Libraries│  │
+│  │ • Compliance│  │ • Access    │  │ • Selective │  │ • Database  │  │ • IOTA     │  │
+│  │   Rules     │  │   Control   │  │   Disclosure│  │   Systems   │  │   Identity │  │
+│  │             │  │             │  │             │  │             │  │   SDK      │  │
 │  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘  └────────────┘  │
 │                                                                                      │
 │  ┌────────────────────────────────────────────────────────────────────────────────┐  │
@@ -206,13 +207,14 @@ Where ZKP technology sits in actual enterprise deployment scenarios:
 │  APPLICATION TIER                                                             │
 │  ┌─────────────────────────────────────────────────────────────────────────┐  │
 │  │  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐                │  │
-│  │  │   Identity    │  │  ZKP Service  │  │   Credential  │                │  │
-│  │  │   Provider    │  │   Engine      │  │   Management  │                │  │
-│  │  │               │  │               │  │   System      │                │  │
-│  │  │ • DID Mgmt    │  │ • Proof Gen   │  │ • Issuance    │                │  │
-│  │  │ • Auth/AuthZ  │  │ • Verification│  │ • Revocation  │                │  │
-│  │  │ • Key Mgmt    │  │ • Selective   │  │ • Status      │                │  │
-│  │  │               │  │   Disclosure  │  │   Tracking    │                │  │
+│  │  │   DID         │  │  BBS+ Selective│  │   Credential  │                │  │
+│  │  │   Resolution  │  │  Disclosure    │  │   Management  │                │  │
+│  │  │   Service     │  │  Engine        │  │   System      │                │  │
+│  │  │               │  │               │  │               │                │  │
+│  │  │ • DID Docs    │  │ • Proof Gen   │  │ • Issuance    │                │  │
+│  │  │ • Key Mgmt    │  │ • Verification│  │ • Revocation  │                │  │
+│  │  │ • Schema      │  │ • Holder-side │  │ • Status      │                │  │
+│  │  │   Resolution  │  │   Privacy     │  │   Tracking    │                │  │
 │  │  └───────────────┘  └───────────────┘  └───────────────┘                │  │
 │  └─────────────────────────────────────────────────────────────────────────┘  │
 │                                    │                                          │
@@ -230,15 +232,18 @@ Where ZKP technology sits in actual enterprise deployment scenarios:
 │  │  └───────────────┘  └───────────────┘  └───────────────┘                │  │
 │  └─────────────────────────────────────────────────────────────────────────┘  │
 │                                                                               │
-│  **ZKP sits primarily in APPLICATION TIER as a SERVICE ENGINE**               │
-│  **Connected to IOTA Tangle for immutable trust anchoring**                   │
+│  **BBS+ Selective Disclosure sits primarily in APPLICATION TIER**             │
+│  **IOTA Identity SDK provides the cryptographic foundation**                   │
+│  **Connected to IOTA Tangle for immutable DID anchoring**                     │
 └───────────────────────────────────────────────────────────────────────────────┘
 ```
 
--   **TypeScript** for type-safe server-side development
--   **IOTA Identity SDK** for DID and credential operations
--   **MongoDB/PostgreSQL** for application data
--   **Redis** for caching and session management
+**Key Technologies:**
+
+-   **TypeScript/WASM** for cross-platform development
+-   **IOTA Identity SDK** for DID and verifiable credential operations
+-   **BBS+ signatures** for selective disclosure capabilities
+-   **IOTA Tangle** for decentralized DID registry
 
 ### 1.3 Technology Stack Details
 
