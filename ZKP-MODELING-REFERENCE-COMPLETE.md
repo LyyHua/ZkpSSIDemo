@@ -1,43 +1,343 @@
 # Zero-Knowledge Proof System Modeling Reference
 
-This document provides comprehensive system modeling perspectives for the Zero-Knowledge Proof (ZKP) implementation using IOTA Identity and BBS+ signatures. It uses various established software engineering modeling methodologies to describe the system architecture, interactions, and security properties.
+This document provides comprehensive system modeling perspectives for the Zero-Knowledge Proof (ZKP) implementation using IOTA Identity and BBS+ signatures. It focuses on enterprise architecture views, system positioning, and formal modeling methodologies to describe the ZKP system within an SSI ecosystem.
 
 ## Table of Contents
 
-1. [UML Representations](#1-uml-representations)
-    - [Class Diagram](#11-class-diagram)
-    - [Sequence Diagram](#12-sequence-diagram)
-    - [Security UML Extensions](#13-security-uml-extensions)
-    - [Activity Diagram](#14-activity-diagram)
-2. [SysML Perspectives](#2-sysml-perspectives)
-    - [Block Definition Diagram](#21-block-definition-diagram)
-    - [Requirements Diagram](#22-requirements-diagram)
-    - [Parametric Diagram](#23-parametric-diagram)
-3. [AADL Architecture Description](#3-aadl-architecture-description)
-4. [Formal Methods Specifications](#4-formal-methods-specifications)
-    - [Z Notation](#41-z-notation)
-    - [Process Algebra (CSP)](#42-process-algebra-csp)
-5. [Security Architecture Frameworks](#5-security-architecture-frameworks)
-    - [SABSA Matrix](#51-sabsa-matrix)
-    - [Threat Modeling](#52-threat-modeling)
+1. [Enterprise Architecture Views](#1-enterprise-architecture-views)
+    - [Layered Architecture View](#11-layered-architecture-view)
+    - [SABSA Security Architecture Model](#12-sabsa-security-architecture-model)
+    - [ZKP Positioning in Enterprise Architecture](#13-zkp-positioning-in-enterprise-architecture)
+    - [Real-world Deployment Architecture](#14-real-world-deployment-architecture)
+2. [UML System Modeling](#2-uml-system-modeling)
+    - [Class Diagram](#21-class-diagram)
+    - [Sequence Diagrams](#22-sequence-diagrams)
+    - [Activity Diagram](#23-activity-diagram)
+    - [Security Annotations (UMLsec)](#24-security-annotations-umlsec)
+3. [SysML Perspectives](#3-sysml-perspectives)
+    - [Block Definition Diagram](#31-block-definition-diagram)
+    - [Requirements Diagram](#32-requirements-diagram)
+    - [Parametric Diagram](#33-parametric-diagram)
+4. [AADL Architecture Description](#4-aadl-architecture-description)
+    - [Component View](#41-component-view)
+    - [Deployment View](#42-deployment-view)
+5. [Formal Methods Specifications](#5-formal-methods-specifications)
+    - [Z Notation](#51-z-notation)
+    - [Process Algebra (CSP)](#52-process-algebra-csp)
 6. [Cryptographic Protocol Notation](#6-cryptographic-protocol-notation)
+    - [Protocol Flow](#61-protocol-flow)
+    - [Security Properties](#62-security-properties)
 
-## 1. UML Representations
+## 1. Enterprise Architecture Views
 
-### 1.1 Class Diagram
+### 1.1 Layered Architecture View
 
-The following UML class diagram represents the core components and their relationships in the ZKP implementation:
+The layered architecture view shows how ZKP fits within the enterprise SSI system from a business perspective down to implementation:
+
+```
+┌───────────────────────────────────────────────────────────────────────────────┐
+│                      ENTERPRISE LAYERED ARCHITECTURE                          │
+├───────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  ┌─────────────────────────────────────────────────────────────────────────┐  │
+│  │                        BUSINESS LAYER                                   │  │
+│  │  • Identity Verification Requirements                                   │  │
+│  │  • Privacy Compliance (GDPR, CCPA)                                      │  │
+│  │  • Trust Framework Policies                                             │  │
+│  │  • Customer Experience Goals                                            │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+│                                    │                                          │
+│                                    ▼                                          │
+│  ┌─────────────────────────────────────────────────────────────────────────┐  │
+│  │                      APPLICATION LAYER                                  │  │
+│  │  • SSI Wallet Applications                                              │  │
+│  │  • Verifier Portals                                                     │  │
+│  │  • Issuer Management Systems                                            │  │
+│  │  • Identity Provider Services                                           │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+│                                    │                                          │
+│                                    ▼                                          │
+│  ┌─────────────────────────────────────────────────────────────────────────┐  │
+│  │                      INTEGRATION LAYER                                  │  │
+│  │  • API Gateways                                                         │  │
+│  │  • Service Orchestration                                                │  │
+│  │  • Message Queues                                                       │  │
+│  │  • Event Streaming                                                      │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+│                                    │                                          │
+│                                    ▼                                          │
+│  ┌─────────────────────────────────────────────────────────────────────────┐  │
+│  │                         ZKP LAYER                                       │  │
+│  │  • Zero-Knowledge Proof Generation                                      │  │
+│  │  • Selective Disclosure Logic                                           │  │
+│  │  • BBS+ Signature Operations                                            │  │
+│  │  • Cryptographic Verification                                           │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+│                                    │                                          │
+│                                    ▼                                          │
+│  ┌─────────────────────────────────────────────────────────────────────────┐  │
+│  │                      PROTOCOL LAYER                                     │  │
+│  │  • IOTA Identity Framework                                              │  │
+│  │  • DID Resolution                                                       │  │
+│  │  • Verifiable Credentials                                               │  │
+│  │  • W3C Standards Implementation                                         │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+│                                    │                                          │
+│                                    ▼                                          │
+│  ┌─────────────────────────────────────────────────────────────────────────┐  │
+│  │                    INFRASTRUCTURE LAYER                                 │  │
+│  │  • IOTA Tangle Network                                                  │  │
+│  │  • Cloud Services (AWS, Azure, GCP)                                     │  │
+│  │  • Container Orchestration (Kubernetes)                                 │  │
+│  │  • Database Systems                                                     │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+└───────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 1.2 SABSA Security Architecture Model
+
+The SABSA (Sherwood Applied Business Security Architecture) model for ZKP system security:
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────────┐
+│                       SABSA SECURITY ARCHITECTURE                                    │
+├──────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                      │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌────────────┐  │
+│  │   BUSINESS  │  │ ARCHITECT   │  │  DESIGNER   │  │   BUILDER   │  │ TRADESMAN  │  │
+│  │ (Contextual)│  │(Conceptual) │  │  (Logical)  │  │ (Physical)  │  │(Component) │  │
+│  │             │  │             │  │             │  │             │  │            │  │
+│  │ • Identity  │  │ • Trust     │  │ • ZKP       │  │ • IOTA      │  │ • BLS12381 │  │
+│  │   Needs     │  │   Models    │  │   Protocols │  │   Tangle    │  │   Curves   │  │
+│  │ • Privacy   │  │ • Security  │  │ • BBS+      │  │ • Node.js   │  │ • WASM     │  │
+│  │   Laws      │  │   Policies  │  │   Schemes   │  │   Runtime   │  │   Bindings │  │
+│  │ • Compliance│  │ • Access    │  │ • Selective │  │ • Database  │  │ • Crypto   │  │
+│  │   Rules     │  │   Control   │  │   Disclosure│  │   Systems   │  │   Libraries│  │
+│  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘  └────────────┘  │
+│                                                                                      │
+│  ┌────────────────────────────────────────────────────────────────────────────────┐  │
+│  │           SECURITY SERVICE MANAGEMENT SYSTEM                                   │  │
+│  │                                                                                │  │
+│  │  • Security Monitoring & Alerting                                              │  │
+│  │  • Key Management & Rotation                                                   │  │
+│  │  • Incident Response & Recovery                                                │  │
+│  │  • Compliance Auditing & Reporting                                             │  │
+│  │  • Risk Assessment & Management                                                │  │
+│  └────────────────────────────────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 1.3 ZKP Positioning in Enterprise Architecture
+
+The positioning of ZKP technology within the broader enterprise SSI system:
+
+```
+┌───────────────────────────────────────────────────────────────────────────────┐
+│                    ZKP POSITIONING IN SSI ENTERPRISE                          │
+├───────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  Enterprise Level: IDENTITY GOVERNANCE                                        │
+│  ┌─────────────────────────────────────────────────────────────────────────┐  │
+│  │ • Identity Lifecycle Management                                         │  │
+│  │ • Trust Framework Administration                                        │  │
+│  │ • Privacy Policy Enforcement                                            │  │
+│  │ • Regulatory Compliance Management                                      │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+│                                    │                                          │
+│                                    ▼                                          │
+│  System Level: SSI ECOSYSTEM                                                  │
+│  ┌─────────────────────────────────────────────────────────────────────────┐  │
+│  │  ┌───────────┐    ┌───────────┐    ┌───────────┐    ┌───────────┐       │  │
+│  │  │  ISSUER   │    │  HOLDER   │    │ VERIFIER  │    │   DID     │       │  │
+│  │  │  SYSTEM   │    │  WALLET   │    │  PORTAL   │    │ REGISTRY  │       │  │
+│  │  └───────────┘    └───────────┘    └───────────┘    └───────────┘       │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+│                                    │                                          │
+│                                    ▼                                          │
+│  Component Level: ZKP INTEGRATION                                             │
+│  ┌─────────────────────────────────────────────────────────────────────────┐  │
+│  │              ┌─────────────────────────────────┐                        │  │
+│  │              │         ZKP ENGINE              │                        │  │
+│  │              │                                 │                        │  │
+│  │  Proof       │  • Selective Disclosure Logic   │      Verification      │  │
+│  │  Generation  │  • BBS+ Signature Operations    │      Engine            │  │
+│  │  ────────────│  • Zero-Knowledge Protocols     │──────────────────────► │  │
+│  │              │  • Privacy Preservation         │                        │  │
+│  │              └─────────────────────────────────┘                        │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+│                                    │                                          │
+│                                    ▼                                          │
+│  Technical Level: CRYPTOGRAPHIC FOUNDATION                                    │
+│  ┌─────────────────────────────────────────────────────────────────────────┐  │
+│  │ • IOTA Identity Framework                                               │  │
+│  │ • BLS12-381 Elliptic Curve Cryptography                                 │  │
+│  │ • Pairing-based Cryptographic Operations                                │  │
+│  │ • IOTA Tangle Distributed Ledger                                        │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+└───────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 1.4 Real-world Deployment Architecture
+
+Where ZKP technology sits in actual enterprise deployment scenarios:
+
+```
+┌───────────────────────────────────────────────────────────────────────────────┐
+│                        REAL-WORLD DEPLOYMENT                                  │
+├───────────────────────────────────────────────────────────────────────────────┤
+│                                                                               │
+│  EXTERNAL STAKEHOLDERS                                                        │
+│  ┌─────────────────────────────────────────────────────────────────────────┐  │
+│  │  Citizens/Users    │   Businesses    │   Government    │   Partners     │  │
+│  │  (Holders)         │   (Verifiers)   │   (Issuers)     │   (Validators) │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+│                                    │                                          │
+│                                    ▼                                          │
+│  ENTERPRISE PERIMETER                                                         │
+│  ┌─────────────────────────────────────────────────────────────────────────┐  │
+│  │                        DMZ (Demilitarized Zone)                         │  │
+│  │  ┌───────────────┐  ┌───────────────┐  ┌─────────────────┐              │  │
+│  │  │   API Gateway │  │  Load Balancer│  │  Web Application│              │  │
+│  │  │   (Rate Limit)│  │  (High Avail.)│  │  Firewall       │              │  │
+│  │  └───────────────┘  └───────────────┘  └─────────────────┘              │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+│                                    │                                          │
+│                                    ▼                                          │
+│  APPLICATION TIER                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────────┐  │
+│  │  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐                │  │
+│  │  │   Identity    │  │  ZKP Service  │  │   Credential  │                │  │
+│  │  │   Provider    │  │   Engine      │  │   Management  │                │  │
+│  │  │               │  │               │  │   System      │                │  │
+│  │  │ • DID Mgmt    │  │ • Proof Gen   │  │ • Issuance    │                │  │
+│  │  │ • Auth/AuthZ  │  │ • Verification│  │ • Revocation  │                │  │
+│  │  │ • Key Mgmt    │  │ • Selective   │  │ • Status      │                │  │
+│  │  │               │  │   Disclosure  │  │   Tracking    │                │  │
+│  │  └───────────────┘  └───────────────┘  └───────────────┘                │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+│                                    │                                          │
+│                                    ▼                                          │
+│  DATA TIER                                                                    │
+│  ┌─────────────────────────────────────────────────────────────────────────┐  │
+│  │  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐                │  │
+│  │  │   Database    │  │  Cache Layer  │  │  IOTA Tangle  │                │  │
+│  │  │   Cluster     │  │  (Redis)      │  │  Network      │                │  │
+│  │  │               │  │               │  │               │                │  │
+│  │  │ • Metadata    │  │ • Session     │  │ • DID Docs    │                │  │
+│  │  │ • Audit Logs  │  │ • Temp Data   │  │ • Public Keys │                │  │
+│  │  │ • Analytics   │  │ • Performance │  │ • Revocation  │                │  │
+│  │  │               │  │   Optimization│  │   Registry    │                │  │
+│  │  └───────────────┘  └───────────────┘  └───────────────┘                │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+│                                                                               │
+│  **ZKP sits primarily in APPLICATION TIER as a SERVICE ENGINE**               │
+│  **Connected to IOTA Tangle for immutable trust anchoring**                   │
+└───────────────────────────────────────────────────────────────────────────────┘
+```
+
+-   **TypeScript** for type-safe server-side development
+-   **IOTA Identity SDK** for DID and credential operations
+-   **MongoDB/PostgreSQL** for application data
+-   **Redis** for caching and session management
+
+### 1.3 Technology Stack Details
+
+#### Core ZKP Technologies
+
+#### Deployment Architecture
+
+```
+┌───────────────────────────────────────────────────────────────┐
+│                   DEPLOYMENT ARCHITECTURE                     │
+├───────────────────────────────────────────────────────────────┤
+│                                                               │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │                  CLIENT TIER                            │  │
+│  │  Browser (React/Vue + IOTA WASM) + Mobile Apps          │  │
+│  └─────────────────┬───────────────────────────────────────┘  │
+│                    │ HTTPS/WSS                                │
+│  ┌─────────────────▼───────────────────────────────────────┐  │
+│  │                APPLICATION TIER                         │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │  │
+│  │  │   API       │  │   ZKP       │  │   Identity      │  │  │
+│  │  │   Gateway   │  │   Service   │  │   Provider      │  │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────────┘  │  │
+│  └─────────────────┬───────────────────────────────────────┘  │
+│                    │ Internal Network                         │
+│  ┌─────────────────▼───────────────────────────────────────┐  │
+│  │                    DATA TIER                            │  │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │  │
+│  │  │  MongoDB/   │  │    Redis    │  │   IOTA Tangle   │  │  │
+│  │  │ PostgreSQL  │  │   Cache     │  │   (DLT Layer)   │  │  │
+│  │  └─────────────┘  └─────────────┘  └─────────────────┘  │  │
+│  └─────────────────────────────────────────────────────────┘  │
+└───────────────────────────────────────────────────────────────┘
+```
+
+### 1.4 ZKP Technology Positioning
+
+#### Within the Technology Stack
+
+The ZKP implementation is strategically positioned across multiple layers:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                ZKP TECHNOLOGY POSITIONING                   │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Layer 1: USER INTERFACE                                    │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │ • ZKP Proof Generation (Client-side)                  │  │
+│  │ • Selective Disclosure UI                             │  │
+│  │ • Privacy-preserving Authentication                   │  │
+│  └───────────────────────────────────────────────────────┘  │
+│                            │                                │
+│  Layer 2: APPLICATION LOGIC                                 │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │ • ZKP Verification Logic                              │  │
+│  │ • Credential Issuance with BBS+                       │  │
+│  │ • Privacy Policy Enforcement                          │  │
+│  └───────────────────────────────────────────────────────┘  │
+│                            │                                │
+│  Layer 3: CRYPTOGRAPHIC FOUNDATION                          │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │ • IOTA Identity Core (BBS+ Signatures)                │  │
+│  │ • Zero-Knowledge Proof Primitives                     │  │
+│  │ • Cryptographic Key Management                        │  │
+│  └───────────────────────────────────────────────────────┘  │
+│                            │                                │
+│  Layer 4: INFRASTRUCTURE                                    │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │ • IOTA Tangle (Immutable Storage)                     │  │
+│  │ • DID Registry and Resolution                         │  │
+│  │ • Revocation and Status Management                    │  │
+│  └───────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Key Positioning Benefits:**
+
+1. **Client-side Privacy**: ZKP generation happens in the browser, ensuring sensitive data never leaves the user's device
+2. **Scalable Verification**: Server-side verification is computationally efficient
+3. **Flexible Disclosure**: Users can selectively reveal only required attributes
+4. **Immutable Audit Trail**: IOTA Tangle provides transparent, tamper-proof records
+
+## 2. UML System Modeling
+
+### 2.1 Class Diagram
+
+The class diagram represents the key objects in the ZKP system and their relationships:
 
 ```
 ┌───────────────────┐      ┌───────────────────┐      ┌───────────────────┐
 │     Issuer        │      │      Holder       │      │     Verifier      │
 ├───────────────────┤      ├───────────────────┤      ├───────────────────┤
 │ - didDocument     │      │ - credentials[]   │      │ - challenge       │
-│ - privateKeys     │      │ - privateKeys     │      │ - trustedIssuers[]│
+│ - privateKeys     │      │ - privateKeys     │      │                   │
 ├───────────────────┤      ├───────────────────┤      ├───────────────────┤
 │ + createIdentity()│      │ + resolveIssuer() │      │ + genChallenge()  │
 │ + signCredential()│◄─────┤ + validateCred()  │◄─────┤ + verifyPresent() │
-│ + revokeCredent() │  VC  │ + createPresent() │  VP  │ + checkStatus()   │
+│                   │  VC  │ + createPresent() │  VP  │                   │
 └───────────────────┘      └───────────────────┘      └───────────────────┘
          ▲                          ▲                          ▲
          │                          │                          │
@@ -47,185 +347,93 @@ The following UML class diagram represents the core components and their relatio
 ├───────────────────┤      ├───────────────────┤      ├───────────────────┤
 │ - id              │      │ - revealedAttrs   │      │ - issuerDoc       │
 │ - issuer          │      │ - hiddenAttrs     │      │ - challenge       │
-│ - type            │      │ - proof           │      │ - timestamp       │
-│ - credSubject     │      │ - challenge       │      ├───────────────────┤
-│ - proof           │      │ - timestamp       │      │ + verifyZKP()     │
-│ - issuanceDate    │      │ - version         │      │ + validateIssuer()│
-│ - expirationDate  │      │                   │      │ + checkChallenge()│
-└───────────────────┘      └───────────────────┘      └───────────────────┘
-         ▲                          ▲                          │
-         │                          │                          │
-         │                          │                          ▼
-┌───────────────────┐      ┌───────────────────┐      ┌───────────────────┐
-│  BbsSignature     │      │ SelectiveDisclos  │      │ CryptographicProof│
-├───────────────────┤      ├───────────────────┤      ├───────────────────┤
-│ - publicKey       │      │ - concealedFields │      │ - proofValue      │
-│ - secretKey       │      │ - disclosedFields │      │ - type            │
-│ - signature       │      │ - proofOptions    │      │ - verificationMeth│
-├───────────────────┤      ├───────────────────┤      ├───────────────────┤
-│ + sign()          │      │ + concealField()  │      │ + verify()        │
-│ + verify()        │      │ + createProof()   │      │ + validateFormat()│
+│ - type            │      │ - proof           │      │                   │
+│ - credSubject     │      │                   │      │ + verifyZKP()     │
+│ - proof           │      │                   │      │ + validateIssuer()│
+│                   │      │                   │      │                   │
 └───────────────────┘      └───────────────────┘      └───────────────────┘
 ```
 
 **Class Descriptions:**
 
--   **Issuer**: Creates and signs verifiable credentials
+-   **Issuer**: Entity that creates and signs verifiable credentials
 
-    -   Implements BBS+ signatures for Zero-Knowledge capabilities
-    -   Manages its DID document and verification methods
-    -   Can revoke credentials it has issued
+    -   **Relationships**: Creates VerifiableCredential, interacts with Holder
+    -   **Security aspects**: Must protect private keys
 
--   **Holder**: Manages credentials and creates presentations
+-   **Holder**: Entity that receives credentials and creates presentations
 
-    -   Controls selective disclosure of credential attributes
-    -   Stores credentials securely while preserving cryptographic properties
-    -   Creates presentations in response to verifier challenges
+    -   **Relationships**: Receives VerifiableCredential, creates Presentation, interacts with Verifier
+    -   **Privacy aspects**: Controls selective disclosure
 
--   **Verifier**: Validates presentations
+-   **Verifier**: Entity that validates presentations
 
-    -   Generates unique challenges for anti-replay protection
-    -   Maintains list of trusted issuers
-    -   Validates presentations cryptographically without requiring issuer participation
+    -   **Relationships**: Receives Presentation, uses ZKPValidator
+    -   **Security aspects**: Generates challenge to prevent replay attacks
 
--   **VerifiableCredential**: Container for claims about the holder
+-   **VerifiableCredential**: Contains claims about the Holder
 
-    -   Includes issuer's cryptographic signature
-    -   Contains structured data that can be selectively disclosed
+    -   **Relationships**: Created by Issuer, stored by Holder
+    -   **Security aspects**: Has cryptographic proof of authenticity
 
--   **Presentation**: Selectively disclosed credential information
+-   **Presentation**: Contains selectively disclosed credential information
 
-    -   Contains revealed attributes in plaintext
-    -   Contains cryptographic proof of concealed attributes
-    -   Includes response to verifier's challenge
+    -   **Relationships**: Created by Holder, verified by Verifier
+    -   **Privacy aspects**: Contains both revealed and concealed attributes
 
--   **ZKPValidator**: Specialized validator for ZKP presentations
+-   **ZKPValidator**: Validates ZKP presentations
+    -   **Relationships**: Used by Verifier
+    -   **Security aspects**: Verifies cryptographic proofs without seeing hidden data
 
-    -   Validates BBS+ proofs
-    -   Verifies integrity of credential while respecting selective disclosure
-    -   Confirms challenge response validity
+### 2.2 Sequence Diagrams
 
--   **BbsSignature**: Implementation of BBS+ signature scheme
-
-    -   Provides multi-message signing capability
-    -   Enables selective disclosure proofs
-    -   Key component for zero-knowledge capabilities
-
--   **SelectiveDisclosure**: Handles selective disclosure operations
-
-    -   Manages field concealment
-    -   Creates zero-knowledge proofs for concealed data
-    -   Preserves cryptographic properties across disclosed/concealed boundary
-
--   **CryptographicProof**: Represents cryptographic proofs in the system
-    -   Links to verification methods
-    -   Contains values needed for verification
-
-### 1.2 Sequence Diagram
-
-The following sequence diagram depicts the complete ZKP interaction flow between the three main actors:
+The sequence diagram shows the temporal interactions between system components:
 
 ```
-┌─────────┐           ┌─────────┐          ┌─────────┐
-│ Issuer  │           │ Holder  │          │Verifier │
-└────┬────┘           └────┬────┘          └────┬────┘
-     │                     │                    │
-     │ 1. createDID()      │                    │
-     │───────────────┐     │                    │
-     │               │     │                    │
-     │◄──────────────┘     │                    │
-     │                     │                    │
-     │ 2. createCredential(subject)             │
-     │───────────────┐     │                    │
-     │               │     │                    │
-     │◄──────────────┘     │                    │
-     │                     │                    │
-     │ 3. signCredential(BBS+)                  │
-     │───────────────┐     │                    │
-     │               │     │                    │
-     │◄──────────────┘     │                    │
-     │                     │                    │
-     │ 4. issueCredential(credentialJPT)        │
-     │─────────────────────>                    │
-     │                     │                    │
-     │                     │ 5. validateCredential()
-     │                     │──────────┐         │
-     │                     │          │         │
-     │                     │◄─────────┘         │
-     │                     │                    │
-     │                     │                    │ 6. requestPresentation(challenge)
-     │                     │                    │────────────┐
-     │                     │                    │            │
-     │                     │                    │◄───────────┘
-     │                     │                    │
-     │                     │                    │
-     │                     │<───────────────────│
-     │                     │                    │
-     │                     │ 7. selectiveDisclose()
-     │                     │──────────┐         │
-     │                     │          │         │
-     │                     │◄─────────┘         │
-     │                     │                    │
-     │                     │ 8. createPresentation(challenge)
-     │                     │──────────┐         │
-     │                     │          │         │
-     │                     │◄─────────┘         │
-     │                     │                    │
-     │                     │ 9. presentCredential(presentationJPT)
-     │                     │───────────────────>│
-     │                     │                    │
-     │                     │                    │ 10. validatePresentation()
-     │                     │                    │────────────┐
-     │                     │                    │            │
-     │                     │                    │◄───────────┘
-     │                     │                    │
-     │                     │                    │ 11. verifyIssuer()
-     │                     │                    │────────────┐
-     │                     │                    │            │
-     │                     │                    │◄───────────┘
-     │                     │                    │
-     │                     │                    │ 12. verifyChallenge()
-     │                     │                    │────────────┐
-     │                     │                    │            │
-     │                     │                    │◄───────────┘
-     │                     │                    │
-     │                     │                    │ 13. processRevealedAttributes()
-     │                     │                    │────────────┐
-     │                     │                    │            │
-     │                     │                    │◄───────────┘
+┌─────────┐          ┌─────────┐          ┌─────────┐
+│ Issuer  │          │ Holder  │          │Verifier │
+└────┬────┘          └────┬────┘          └────┬────┘
+     │                    │                    │
+     │ 1. Create Identity │                    │
+     ├───────────────────►│                    │
+     │                    │                    │
+     │ 2. Issue Credential│                    │
+     ├───────────────────►│                    │
+     │                    │                    │
+     │                    │                    │
+     │                    │  3. Request Proof  │
+     │                    │◄───────────────────┤
+     │                    │                    │
+     │                    │ 4. Create          │
+     │                    ├─┐ Selective        │
+     │                    │ │ Disclosure       │
+     │                    │ │ Presentation     │
+     │                    │◄┘                  │
+     │                    │                    │
+     │                    │ 5. Present ZKP     │
+     │                    ├───────────────────►│
+     │                    │                    │
+     │                    │                    │ 6. Verify
+     │                    │                    ├─┐ ZKP without
+     │                    │                    │ │ seeing hidden
+     │                    │                    │ │ attributes
+     │                    │                    │◄┘
+     │                    │                    │
+     │                    │ 7. Access granted  │
+     │                    │◄───────────────────┤
+     │                    │                    │
 ```
 
-### 1.3 Security UML Extensions
+**Security and Privacy Annotations:**
 
-Using UMLsec annotations for security properties:
+-   Between steps 1-2: {secrecy=privateKeys}
+-   Between steps 2-3: {integrity=credential}
+-   Between steps 4-5: {selective_disclosure=true}
+-   At step 6: {zero_knowledge_property=true}
 
-```
-┌───────────────┐           ┌──────────────┐           ┌────────────┐
-│    Issuer     │           │    Holder    │           │  Verifier  │
-└───────┬───────┘           └──────┬───────┘           └──────┬─────┘
-        │                          │                          │
-        │ <<secure_channel>>       │                          │
-        │ {secrecy=privateKeys}    │                          │
-        │─────────────────────────>│                          │
-        │                          │ <<secure_channel>>       │
-        │                          │ {hidden_attrs_protected} │
-        │                          │─────────────────────────>│
-        │                          │                          │
-        │        <<critical>>      │      <<critical>>        │
-        │      {high_integrity}    │    {replay_protected}    │
-        │<─────────────────────────┼─────────────────────────>│
-```
+### 2.3 Activity Diagram
 
-Key security annotations:
-
--   **{secrecy=privateKeys}**: Indicates that private keys must remain confidential
--   **{hidden_attrs_protected}**: Concealed attributes must remain protected
--   **{high_integrity}**: Credential integrity must be preserved
--   **{replay_protected}**: Presentations must include anti-replay protection
-
-### 1.4 Activity Diagram
-
-This activity diagram shows the flow of the ZKP process:
+The activity diagram shows the flow of the ZKP process:
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -251,349 +459,312 @@ This activity diagram shows the flow of the ZKP process:
 │            │                             └────────┬────────┘         │
 │            │                                      │                  │
 │  ┌─────────┴─────────┐                            ▼                  │
-│  │ Verifier Resolves │                  ┌─────────────────┐          │
+│  │ Verifier Resolves │                  ┌──────────────────┐         │
 │  │ Issuer DID        │                  │  Holder Stores  │          │
 │  │                   │                  │  Credential     │          │
 │  └─────────┬─────────┘                  └─────────┬───────┘          │
 │            │                                      │                  │
 │            │                                      ▼                  │
-│            │                            ┌─────────────────────────┐  │
-│            │                            │Holder creates Selective  │  │
-│            │                            │Disclosure Presentation   │  │
-│            ▼                            └─────────────┬───────────┘  │
-│   ┌──────────────────┐                                │              │
-│   │Verifier Validates│                                │              │
-│   │   Presentation   │◄───────────────────────────────┘              │
-│   │                  │                                               │
-│   └────────┬─────────┘                                               │
-│            │                                                         │
-│            ▼                                                         │
-│   ┌──────────────────┐                                               │
-│   │Process Disclosed │                                               │
-│   │   Attributes     │                                               │
-│   │                  │                                               │
-│   └──────────────────┘                                               │
+│  ┌─────────┴─────────┐                  ┌─────────────────┐          │
+│  │  Verifier         │                  │ Verifier Requests│         │
+│  │  Validates        │◄─────────────────┤ Proof with       │         │
+│  │  Presentation     │                  │ Challenge        │         │
+│  └─────────┬─────────┘                  └─────────┬────────┘         │
+│            │                                      │                  │
+│            │                                      ▼                  │
+│            │                             ┌─────────────────┐         │
+│            │                             │ Holder Selectively        │
+│            │                             │ Conceals Fields │         │
+│            │                             └────────┬────────┘         │
+│            │                                      │                  │
+│            │                                      ▼                  │
+│            │                             ┌─────────────────┐         │
+│            │                             │ Holder Creates  │         │
+│            │                             │ ZKP Presentation│         │
+│            └────────────────────────────►└────────┬────────┘         │
+│                                                   │                  │
+│                                                   ▼                  │
+│                                          ┌─────────────────┐         │
+│                                          │   End           │         │
+│                                          └─────────────────┘         │
 │                                                                      │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
-## 2. SysML Perspectives
+### 2.4 Security Annotations (UMLsec)
 
-### 2.1 Block Definition Diagram
-
-This SysML Block Definition Diagram shows the system components and their relationships:
+Following the UMLsec extension for secure systems:
 
 ```
-┌─────────────────────────────────┐
-│           <<system>>            │
-│      Zero-Knowledge System      │
-├─────────────────────────────────┤
-│                                 │
-│  ┌──────────┐   ┌─────────────┐ │
-│  │ <<block>>│   │  <<block>>  │ │
-│  │  Issuer  │   │   Holder    │ │
-│  └────┬─────┘   └──────┬──────┘ │
-│       │                │        │
-│       │                │        │
-│       ▼                ▼        │
-│  ┌─────────┐   ┌─────────────┐  │
-│  │<<block>>│   │  <<block>>  │  │
-│  │  BBS+   │   │ Presentation│  │
-│  │Signature│   │  Generator  │  │
-│  └─────────┘   └─────────────┘  │
-│                                 │
-│       ┌───────────────┐         │
-│       │   <<block>>   │         │
-│       │   Verifier    │         │
-│       └───────┬───────┘         │
-│               │                 │
-│               ▼                 │
-│       ┌───────────────┐         │
-│       │   <<block>>   │         │
-│       │ ZKP Validator │         │
-│       └───────────────┘         │
-└─────────────────────────────────┘
+┌───────────────────┐         ┌───────────────────┐         ┌───────────────────┐
+│      Issuer       │         │      Holder       │         │     Verifier      │
+└─────────┬─────────┘         └─────────┬─────────┘         └─────────┬─────────┘
+          │                             │                             │
+          │  <<secure_channel>>         │                             │
+          ├────────────────────────────►│                             │
+          │                             │                             │
+          │                             │  <<secure_channel>>         │
+          │                             ├────────────────────────────►│
+          │                             │                             │
+                    ┌───────────────────┴───────────────────┐
+                    │           <<critical>>                │
+                    │     {secrecy=privateKeys}             │
+                    │     {selective_disclosure=true}       │
+                    │     {zero_knowledge_property=true}    │
+                    └───────────────────────────────────────┘
 ```
 
-### 2.2 Requirements Diagram
+## 3. SysML Perspectives
 
-This SysML Requirements Diagram captures the primary requirements for the ZKP system:
+### 3.1 Block Definition Diagram
 
-```
-┌───────────────────────┐
-│    <<requirement>>    │
-│    ZKP System         │
-│                       │
-│ ID: "ZKP-SYS-001"     │
-│ Text: "The system     │
-│ shall enable selective│
-│ disclosure of         │
-│ credential attributes.│
-└───────────┬───────────┘
-            │
-            │
-    ┌───────┴───────┐
-    │               │
-    ▼               ▼
-┌─────────────┐  ┌─────────────┐
-│<<requirement│  │<<requirement│
-│  Security   │  │  Privacy    │
-│             │  │             │
-│ID:"ZKP-SEC" │  │ID:"ZKP-PRV" │
-│Text:"Ensure │  │Text:"Allow  │
-│credential   │  │selective    │
-│integrity"   │  │disclosure"  │
-└──────┬──────┘  └──────┬──────┘
-       │                │
-       ▼                ▼
-┌─────────────┐  ┌─────────────┐
-│<<requirement│  │<<requirement│
-│Anti-replay  │  │ Zero-       │
-│Protection   │  │ Knowledge   │
-│             │  │             │
-│ID:"ZKP-SEC-2│  │ID:"ZKP-PRV-1│
-│Text:"Prevent│  │Text:"Hidden │
-│replay       │  │attrs not    │
-│attacks"     │  │revealed"    │
-└─────────────┘  └─────────────┘
-```
-
-### 2.3 Parametric Diagram
-
-This parametric diagram shows the key cryptographic relationships in the ZKP system:
+The BDD shows the structural composition of the ZKP system:
 
 ```
-┌───────────────────────────────────────────────────┐
-│ <<parametric>>                                    │
-│ ZKP Security Parameters                           │
-│                                                   │
-│  ┌───────────┐     ┌────────────┐   ┌──────────┐  │
-│  │           │     │            │   │          │  │
-│  │ Entropy   ├────►│ Key Length ├──►│ Security │  │
-│  │ Source    │     │            │   │ Level    │  │
-│  └───────────┘     └────────────┘   └──────────┘  │
-│                          │                        │
-│                          │                        │
-│                          ▼                        │
-│  ┌───────────┐     ┌────────────┐   ┌──────────┐  │
-│  │           │     │            │   │          │  │
-│  │ BBS+      ├────►│ Zero-      ├──►│Disclosure│  │
-│  │ Algorithm │     │ Knowledge   │   │Control   │  │
-│  └───────────┘     │ Properties  │   │         │  │
-│                    └────────────┘   └──────────┘  │
-│                                                   │
-└───────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                          ZKP-SSI System                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ parts:                                                              │
+│  issuerSubsystem: IssuerSubsystem                                   │
+│  holderSubsystem: HolderSubsystem                                   │
+│  verifierSubsystem: VerifierSubsystem                               │
+│  distributedLedger: IOTA Tangle                                     │
+└─────────────────────────────────────────────────────────────────────┘
+           ┌─────────┐         ┌─────────┐         ┌─────────┐
+           │         │         │         │         │         │
+           ▼         │         ▼         │         ▼         │
+┌─────────────────┐  │┌─────────────────┐│┌─────────────────┐│
+│IssuerSubsystem  │  ││HolderSubsystem  │││VerifierSubsystem││
+├─────────────────┤  │├─────────────────┤│├─────────────────┤│
+│parts:           │  ││parts:           │││parts:           ││
+│ keyManager      │  ││ credentialStore │││ zkpValidator    ││
+│ didPublisher    │  ││ zkpGenerator    │││ challengeGen    ││
+│ credentialIssuer│  ││ presentationGen │││ presentationVal ││
+└─────────────────┘  │└─────────────────┘│└─────────────────┘│
+                     │                   │                   │
+                     │  ┌──────────────┐ │                   │
+                     └─►│  IOTA Tangle │◄┘                   │
+                        │  (DLT)       │◄────────────────────┘
+                        └──────────────┘
 ```
 
-## 3. AADL Architecture Description
-
-The following is an AADL-like pseudocode for describing the ZKP system architecture:
-
-```aadl
-system ZKP_System
-    features
-        credential_issuance: in out data port;
-        presentation_submission: in out data port;
-        verification_result: out data port;
-end ZKP_System;
-
-system implementation ZKP_System.impl
-    subcomponents
-        issuer: process Issuer_Process;
-        holder: process Holder_Process;
-        verifier: process Verifier_Process;
-        crypto_service: process Crypto_Service;
-
-    connections
-        conn1: port issuer.credential_out -> holder.credential_in;
-        conn2: port holder.presentation_out -> verifier.presentation_in;
-        conn3: port verifier.result_out -> ZKP_System.verification_result;
-        conn4: port issuer.crypto_request -> crypto_service.request_in;
-        conn5: port holder.crypto_request -> crypto_service.request_in;
-        conn6: port verifier.crypto_request -> crypto_service.request_in;
-
-    properties
-        Security_Properties::Confidentiality => high applies to conn1;
-        Security_Properties::Integrity => high applies to conn2;
-        Security_Properties::Data_Origin_Authentication => high applies to conn2;
-end ZKP_System.impl;
-
-process Issuer_Process
-    features
-        credential_out: out data port;
-        crypto_request: out event data port;
-end Issuer_Process;
-
-process Holder_Process
-    features
-        credential_in: in data port;
-        presentation_out: out data port;
-        crypto_request: out event data port;
-end Holder_Process;
-
-process Verifier_Process
-    features
-        presentation_in: in data port;
-        result_out: out data port;
-        crypto_request: out event data port;
-end Verifier_Process;
-
-process Crypto_Service
-    features
-        request_in: in event data port;
-        result_out: out event data port;
-
-    flows
-        bbs_signature: flow path request_in -> result_out;
-        selective_disclosure: flow path request_in -> result_out;
-        zkp_verification: flow path request_in -> result_out;
-
-    properties
-        Security_Properties::Side_Channel_Protection => true;
-end Crypto_Service;
-```
-
-## 4. Formal Methods Specifications
-
-### 4.1 Z Notation
-
-The following Z notation describes the key components and operations in the ZKP system:
+### 3.2 Requirements Diagram (Report only since i don't understand shit or this diagram doesn't even make any sense)
 
 ```
-// Type definitions
-[ATTRIBUTE, DID, SIGNATURE, PROOF, CHALLENGE]
+┌───────────────────────────────────────────┐
+│<<requirement>>                            │
+│           ZKP System Requirements         │
+├───────────────────────────────────────────┤
+│id="REQ-ZKP-1"                             │
+│text="The system shall support selective   │
+│     disclosure of credential attributes   │
+│     without revealing hidden attributes"  │
+└─────────────────┬─────────────────────────┘
+                  │
+        ┌─────────┴─────────┐
+        │                   │
+┌───────▼───────────┐ ┌─────▼───────────────┐
+│<<requirement>>    │ │<<requirement>>      │
+│  Privacy          │ │  Verifiability      │
+├───────────────────┤ ├─────────────────────┤
+│id="REQ-ZKP-1.1"   │ │id="REQ-ZKP-1.2"     │
+│text="Hidden       │ │text="Verifier must  │
+│  attributes shall │ │  be able to verify  │
+│  not be revealed" │ │  credential validity│
+│                   │ │  without seeing all │
+│                   │ │  attributes"        │
+└───────────────────┘ └─────────────────────┘
+```
 
-// Credential Schema
-Schema Credential {
-  id: DID
+### 3.3 Parametric Diagram (Report only since i don't understand shit)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   ZKP Performance Parameters                │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────────┐    ┌─────────────────┐                │
+│  │ Proof Generation│    │ Proof           │                │
+│  │ Time            │    │ Verification    │                │
+│  │                 │    │ Time            │                │
+│  │ T_gen = f(       │    │ T_ver = g(      │                │
+│  │   attributes,   │    │   proof_size,   │                │
+│  │   complexity,   │    │   public_keys,  │                │
+│  │   device_power) │    │   algorithm)    │                │
+│  └─────────────────┘    └─────────────────┘                │
+│                                                             │
+│  Constraints:                                               │
+│  • T_gen ≤ 5 seconds (mobile devices)                      │
+│  • T_ver ≤ 500ms (server verification)                     │
+│  • Privacy_level ≥ 99.9% (information leakage)            │
+│  • Proof_size ≤ 2KB (network efficiency)                  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## 4. AADL Architecture Description
+
+### 4.1 Component View
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                                                                  │
+│  ┌────────────────┐          ┌─────────────────┐                 │
+│  │                │          │                 │                 │
+│  │   Issuer       │          │  Holder         │                 │
+│  │   Component    │          │  Component      │                 │
+│  │                │          │                 │                 │
+│  └───────┬────────┘          └────────┬────────┘                 │
+│          │                            │                          │
+│          │                            │                          │
+│          │                            │                          │
+│          ▼                            ▼                          │
+│  ┌────────────────┐          ┌─────────────────┐                 │
+│  │                │          │                 │                 │
+│  │  DID Registry  │◄─────────┤ ZKP Generator   │                 │
+│  │  (IOTA Tangle) │          │                 │                 │
+│  │                │          │                 │                 │
+│  └───────┬────────┘          └────────┬────────┘                 │
+│          │                            │                          │
+│          │                            │                          │
+│          │                            │                          │
+│          ▼                            ▼                          │
+│  ┌────────────────┐          ┌─────────────────┐                 │
+│  │                │          │  ZKP Validator  │◄────────────┐   │
+│  │  Credential    │          │                 │             │   │
+│  │  Issuer        │          │                 │             │   │
+│  │                │          └─────────────────┘             │   │
+│  └────────────────┘          └─────────────────┘             │   │
+│                                                              │   │
+│                              ┌─────────────────┐             │   │
+│                              │                 │             │   │
+│                              │  Verifier       ├─────────────┘   │
+│                              │  Component      │                 │
+│                              │                 │                 │
+│                              └─────────────────┘                 │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### 4.2 Deployment View
+
+```
+┌────────────────────┐        ┌────────────────────┐
+│                    │        │                    │
+│ Issuer Server      │        │  Holder Device     │
+│                    │        │                    │
+│ ┌────────────────┐ │        │ ┌────────────────┐ │
+│ │                │ │        │ │                │ │
+│ │ Key Management │ │        │ │ Credential     │ │
+│ │ System         │ │        │ │ Wallet         │ │
+│ │                │ │        │ │                │ │
+│ └────────────────┘ │        │ └────────────────┘ │
+│                    │        │                    │
+│ ┌────────────────┐ │        │ ┌────────────────┐ │
+│ │                │ │        │ │                │ │
+│ │ Credential     │ │        │ │ ZKP Generator  │ │
+│ │ Issuer         │ │        │ │                │ │
+│ │                │ │        │ │                │ │
+│ └────────────────┘ │        │ └────────────────┘ │
+└────────────────────┘        └────────────────────┘
+         │                              │
+         │                              │
+         │                              │
+         ▼                              ▼
+┌────────────────────┐        ┌────────────────────┐
+│                    │        │                    │
+│ IOTA Tangle        │        │ Verifier Server    │
+│ (Distributed       │        │                    │
+│  Ledger)           │        │ ┌────────────────┐ │
+│                    │        │ │                │ │
+│ ┌────────────────┐ │        │ │ Challenge      │ │
+│ │                │ │        │ │ Generator      │ │
+│ │ DID Registry   │ │        │ │                │ │
+│ │                │ │        │ └────────────────┘ │
+│ └────────────────┘ │        │                    │
+│                    │        │ ┌────────────────┐ │
+│                    │        │ │                │ │
+│                    │        │ │ ZKP Validator  │ │
+│                    │        │ │                │ │
+│                    │        │ │                │ │
+│                    │        │ └────────────────┘ │
+└────────────────────┘        └────────────────────┘
+```
+
+## 5. Formal Methods Specifications
+
+### 5.1 Z Notation
+
+```
+ZKPCredential
+  id: CREDENTIAL_ID
   issuer: DID
-  subject: P ATTRIBUTE
-  proof: SIGNATURE
+  subject: DID
+  claims: ATTRIBUTE_NAME ↦ ATTRIBUTE_VALUE
+  signature: BBS_SIGNATURE
 
-  // Invariants
-  issuer.hasKey(proof.keyId)
-  proof.validates(subject)
-}
-
-// Presentation Schema
-Schema Presentation {
-  credential: Credential
-  revealed: P ATTRIBUTE
-  concealed: P ATTRIBUTE
+ZKPPresentation
+  revealed_claims: ATTRIBUTE_NAME ↦ ATTRIBUTE_VALUE
+  proof: ZK_PROOF
   challenge: CHALLENGE
-  proof: PROOF
 
-  // Invariants
-  revealed ∪ concealed = credential.subject
-  revealed ∩ concealed = ∅
-  proof.validates(revealed, concealed, challenge)
-  proof.derivesFrom(credential.proof)
-}
+verify_presentation: ZKPPresentation × DID × CHALLENGE → BOOLEAN
 
-// Verification Operation
-Operation Verify(p: Presentation, c: CHALLENGE) {
-  pre:
-    p.challenge = c
-
-  post:
-    result = true ⇔
-      issuer.resolves() ∧
-      p.proof.validates(p.revealed, p.concealed, c) ∧
-      p.proof.verifyDerivation(issuer.getKey(p.proof.keyId))
-}
-
-// Selective Disclosure Operation
-Operation ConcealAttribute(cred: Credential, attr: ATTRIBUTE) {
-  pre:
-    attr ∈ cred.subject
-
-  post:
-    result.credential = cred ∧
-    result.concealed = {attr} ∧
-    result.revealed = cred.subject \ {attr} ∧
-    result.proof.validates(result.revealed, result.concealed, _)
-}
+∀ p: ZKPPresentation; issuer: DID; c: CHALLENGE •
+  verify_presentation(p, issuer, c) = TRUE ⇔
+    (p.challenge = c) ∧
+    (∃ cred: ZKPCredential •
+      cred.issuer = issuer ∧
+      verify_proof(p.proof, cred, p.revealed_claims))
 ```
 
-### 4.2 Process Algebra (CSP)
-
-The following CSP notation models the communication between the three main actors:
+### 5.2 Process Algebra (CSP)
 
 ```
-// Channel definitions
-channel issue, store, request_presentation, create_presentation, validate
-channel success, failure
+ISSUER = issue_credential → publish_did → ISSUER
 
-// Process definitions
-ISSUER = issue.credential -> ISSUER
+HOLDER = receive_credential → store_credential →
+         (present_proof → HOLDER | revoke_consent → HOLDER)
 
-HOLDER = issue.credential?cred -> store.cred ->
-         request_presentation?challenge ->
-         create_presentation.(cred, challenge) -> HOLDER
+VERIFIER = request_proof → verify_proof →
+          (grant_access → VERIFIER | deny_access → VERIFIER)
 
-VERIFIER = request_presentation!challenge ->
-           create_presentation?presentation ->
-           (validate.presentation -> success -> VERIFIER
-           □
-           validate.presentation -> failure -> VERIFIER)
-
-// System definition
-SYSTEM = ISSUER |[issue]| HOLDER |[create_presentation]| VERIFIER
+SYSTEM = ISSUER ||| HOLDER ||| VERIFIER
 ```
-
-## 5. Security Architecture Frameworks
-
-### 5.1 SABSA Matrix
-
-The SABSA matrix for the ZKP system:
-
-| Layer           | What                           | Why                        | How                         | Who              | Where                | When                      |
-| --------------- | ------------------------------ | -------------------------- | --------------------------- | ---------------- | -------------------- | ------------------------- |
-| **Contextual**  | Secure credential sharing      | Privacy protection         | ZKP protocols               | Identity owners  | Digital interactions | During verification needs |
-| **Conceptual**  | Selective data disclosure      | Minimize data exposure     | BBS+ signatures             | SSI participants | SSI ecosystem        | Credential presentation   |
-| **Logical**     | ZKP integration                | Cryptographic verification | IOTA Identity framework     | Developers       | Application layer    | Design & implementation   |
-| **Physical**    | BBS+ implementation            | Cryptographic assurance    | IOTA Identity WASM          | Implementers     | Distributed ledger   | Runtime                   |
-| **Component**   | Selective disclosure functions | Fine-grained control       | concealInSubject()          | Programmers      | Code base            | Development phase         |
-| **Operational** | Credential verification        | Trustless operation        | Challenge-response protocol | End users        | Client applications  | User interaction          |
-
-### 5.2 Threat Modeling
-
-STRIDE threat modeling for ZKP system:
-
-| Threat Type            | Threat                                   | Countermeasure                                    |
-| ---------------------- | ---------------------------------------- | ------------------------------------------------- |
-| Spoofing               | Impersonation of legitimate issuer       | Cryptographic verification of issuer signature    |
-| Tampering              | Modification of credential attributes    | BBS+ signatures ensure integrity                  |
-| Repudiation            | Denial of presentation creation          | Challenges are signed as part of presentation     |
-| Information Disclosure | Revealing hidden attributes              | Zero-knowledge proofs mathematically protect data |
-| Denial of Service      | Overload verifier with invalid proofs    | Rate limiting, proof complexity validation        |
-| Elevation of Privilege | Accessing data beyond what was disclosed | Strict enforcement of selective disclosure scope  |
 
 ## 6. Cryptographic Protocol Notation
 
-The following notation describes the ZKP protocol in cryptographic terms:
+### 6.1 Protocol Flow
 
 ```
-// Setup
-Issuer generates (sk_I, pk_I) where sk_I is secret key, pk_I is public key
-Issuer publishes pk_I in DID document
+1. Setup:
+   Issuer → Gen(1^λ) → (pk_I, sk_I)
+   Holder → Gen(1^λ) → (pk_H, sk_H)
 
-// Credential Issuance
-Let m = (m₁, m₂, ..., mₙ) be the attributes of the credential
-Issuer computes σ = BBS.Sign(sk_I, m)
-Issuer sends (m, σ) to Holder
-Holder verifies BBS.Verify(pk_I, m, σ) = true
+2. Credential Issuance:
+   Issuer: σ ← Sign(sk_I, (attr₁, attr₂, ..., attrₙ))
+   Issuer → Holder: (σ, attr₁, attr₂, ..., attrₙ)
 
-// Presentation Creation
-Verifier sends challenge c to Holder
-Holder selects subset D ⊆ {1, 2, ..., n} for disclosure
-Let I = {1, 2, ..., n} \ D be indices of hidden attributes
-Holder computes π = BBS.ProveSubset(pk_I, m, σ, D, c)
-Holder sends (D, {m_i | i ∈ D}, π) to Verifier
+3. Proof Generation:
+   Holder: Choose revealed set R ⊆ {1, 2, ..., n}
+   Holder: π ← ZKProof(σ, {attrᵢ : i ∈ R}, {attrⱼ : j ∉ R})
+   Holder → Verifier: (π, {attrᵢ : i ∈ R})
 
-// Presentation Verification
-Verifier retrieves pk_I from Issuer's DID document
-Verifier checks BBS.VerifySubset(pk_I, {m_i | i ∈ D}, D, π, c) = true
+4. Verification:
+   Verifier: b ← Verify(pk_I, π, {attrᵢ : i ∈ R})
+   If b = 1: Accept; Else: Reject
 ```
 
-This comprehensive system modeling document provides multiple technical perspectives on the ZKP implementation in IOTA Identity, using established modeling techniques in software and systems engineering.
+### 6.2 Security Properties
+
+```
+Zero-Knowledge Property:
+∀ adversary A, ∃ simulator S such that
+  View_A(Real_Experiment) ≈ᶜ View_A(Simulated_Experiment)
+
+Soundness Property:
+Pr[Verify(pk, π, claims) = 1 ∧ ¬Valid(pk, π, claims)] ≤ negl(λ)
+
+Unlinkability Property:
+∀ proofs π₁, π₂ from same credential:
+  Advantage_A(Link(π₁, π₂)) ≤ negl(λ)
+```
