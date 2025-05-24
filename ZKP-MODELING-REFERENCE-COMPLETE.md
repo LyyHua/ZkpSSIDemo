@@ -207,9 +207,9 @@ Where ZKP technology sits in actual enterprise deployment scenarios:
 │  APPLICATION TIER                                                             │
 │  ┌─────────────────────────────────────────────────────────────────────────┐  │
 │  │  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐                │  │
-│  │  │   DID         │  │  BBS+ Selective│  │   Credential  │                │  │
-│  │  │   Resolution  │  │  Disclosure    │  │   Management  │                │  │
-│  │  │   Service     │  │  Engine        │  │   System      │                │  │
+│  │  │   DID         │  │ BBS+ Selective│  │   Credential  │                │  │
+│  │  │   Resolution  │  │ Disclosure    │  │   Management  │                │  │
+│  │  │   Service     │  │ Engine        │  │   System      │                │  │
 │  │  │               │  │               │  │               │                │  │
 │  │  │ • DID Docs    │  │ • Proof Gen   │  │ • Issuance    │                │  │
 │  │  │ • Key Mgmt    │  │ • Verification│  │ • Revocation  │                │  │
@@ -233,7 +233,7 @@ Where ZKP technology sits in actual enterprise deployment scenarios:
 │  └─────────────────────────────────────────────────────────────────────────┘  │
 │                                                                               │
 │  **BBS+ Selective Disclosure sits primarily in APPLICATION TIER**             │
-│  **IOTA Identity SDK provides the cryptographic foundation**                   │
+│  **IOTA Identity SDK provides the cryptographic foundation**                  │
 │  **Connected to IOTA Tangle for immutable DID anchoring**                     │
 └───────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -276,6 +276,7 @@ Where ZKP technology sits in actual enterprise deployment scenarios:
 │  │  │ PostgreSQL  │  │   Cache     │  │   (DLT Layer)   │  │  │
 │  │  └─────────────┘  └─────────────┘  └─────────────────┘  │  │
 │  └─────────────────────────────────────────────────────────┘  │
+│                                                               │
 └───────────────────────────────────────────────────────────────┘
 ```
 
