@@ -291,7 +291,7 @@ This diagram illustrates where ZKP fits in the SSI flow:
          │                          │                          │
          │                          │ 6. Sends presentation    │
          │                          │    with ZKP              │
-         │                          │ ─────────────────────────>
+         │                          │ ────────────────────────>│
          │                          │                          │
          │                          │                          │ 7. Verifies ZKP
          │                          │                          │    proof without

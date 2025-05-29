@@ -36,7 +36,7 @@ This document contains activity diagrams for the various use cases of the Librar
 ## 1. Đăng nhập (Login)
 
 ```mermaid
-graph TD
+graph TD    
     start((Start)) --> AccessLoginPage
 
     subgraph Actions
