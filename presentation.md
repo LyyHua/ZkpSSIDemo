@@ -369,9 +369,10 @@ Zero-Knowledge Proofs integrate at specific points in the SSI credential flow. T
 ```
 
 **Key ZKP Integration Points:**
-- **Point 1**: Issuer creates BBS+ signed credentials (enables future ZKP)
-- **Point 5**: Holder generates selective disclosure proof (core ZKP operation)
-- **Point 7**: Verifier validates proof without accessing hidden attributes
+
+-   **Point 1**: Issuer creates BBS+ signed credentials (enables future ZKP)
+-   **Point 5**: Holder generates selective disclosure proof (core ZKP operation)
+-   **Point 7**: Verifier validates proof without accessing hidden attributes
 
 ### ZKP Sequence Diagram
 
@@ -701,98 +702,56 @@ All this while seeing only the fields the holder chose to disclose!
 
 The layered architecture view shows how ZKP fits within the enterprise SSI system from a business perspective down to implementation:
 
-```
-┌───────────────────────────────────────────────────────────────────────────────┐
-│                      ENTERPRISE LAYERED ARCHITECTURE                          │
-├───────────────────────────────────────────────────────────────────────────────┤
-│                                                                               │
-│  ┌─────────────────────────────────────────────────────────────────────────┐  │
-│  │                        BUSINESS LAYER                                   │  │
-│  │  • Identity Verification Requirements                                   │  │
-│  │  • Privacy Compliance (GDPR, CCPA)                                      │  │
-│  │  • Trust Framework Policies                                             │  │
-│  │  • Customer Experience Goals                                            │  │
-│  └─────────────────────────────────────────────────────────────────────────┘  │
-│                                    │                                          │
-│                                    ▼                                          │
-│  ┌─────────────────────────────────────────────────────────────────────────┐  │
-│  │                      APPLICATION LAYER                                  │  │
-│  │  • SSI Wallet Applications                                              │  │
-│  │  • Verifier Portals                                                     │  │
-│  │  • Issuer Management Systems                                            │  │
-│  │  • DID Resolver Services                                                │  │
-│  └─────────────────────────────────────────────────────────────────────────┘  │
-│                                    │                                          │
-│                                    ▼                                          │
-│  ┌─────────────────────────────────────────────────────────────────────────┐  │
-│  │                      INTEGRATION LAYER                                  │  │
-│  │  • API Gateways                                                         │  │
-│  │  • Service Orchestration                                                │  │
-│  │  • Message Queues                                                       │  │
-│  │  • Event Streaming                                                      │  │
-│  └─────────────────────────────────────────────────────────────────────────┘  │
-│                                    │                                          │
-│                                    ▼                                          │
-│  ┌─────────────────────────────────────────────────────────────────────────┐  │
-│  │                         ZKP LAYER                                       │  │
-│  │  • Zero-Knowledge Proof Generation                                      │  │
-│  │  • Selective Disclosure Logic                                           │  │
-│  │  • BBS+ Signature Operations                                            │  │
-│  │  • Cryptographic Verification                                           │  │
-│  └─────────────────────────────────────────────────────────────────────────┘  │
-│                                    │                                          │
-│                                    ▼                                          │
-│  ┌─────────────────────────────────────────────────────────────────────────┐  │
-│  │                      PROTOCOL LAYER                                     │  │
-│  │  • IOTA Identity Framework                                              │  │
-│  │  • DID Resolution                                                       │  │
-│  │  • Verifiable Credentials                                               │  │
-│  │  • W3C Standards Implementation                                         │  │
-│  └─────────────────────────────────────────────────────────────────────────┘  │
-│                                    │                                          │
-│                                    ▼                                          │
-│  ┌─────────────────────────────────────────────────────────────────────────┐  │
-│  │                    INFRASTRUCTURE LAYER                                 │  │
-│  │  • IOTA Tangle Network                                                  │  │
-│  │  • Cloud Services (AWS, Azure, GCP)                                     │  │
-│  │  • Container Orchestration (Kubernetes)                                 │  │
-│  │  • Database Systems                                                     │  │
-│  └─────────────────────────────────────────────────────────────────────────┘  │
-└───────────────────────────────────────────────────────────────────────────────┘
-```
+```mermaid
+graph TD
+    subgraph BL ["Business Layer"]
+        BL1["Identity Verification Requirements"]
+        BL2["Privacy Compliance (GDPR, CCPA)"]
+        BL3["Trust Framework Policies"]
+        BL4["Customer Experience Goals"]
+    end
 
-### Security Architecture Framework
+    subgraph AL ["Application Layer"]
+        AL1["SSI Wallet Applications"]
+        AL2["Verifier Portals"]
+        AL3["Issuer Management Systems"]
+        AL4["DID Resolver Services"]
+    end
 
-The SABSA (Sherwood Applied Business Security Architecture) model for ZKP system security:
+    subgraph IL ["Integration Layer"]
+        IL1["API Gateways"]
+        IL2["Service Orchestration"]
+        IL3["Message Queues"]
+        IL4["Event Streaming"]
+    end
 
-```
-┌──────────────────────────────────────────────────────────────────────────────────────┐
-│                       SABSA SECURITY ARCHITECTURE                                    │
-├──────────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                      │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌────────────┐  │
-│  │   BUSINESS  │  │ ARCHITECT   │  │  DESIGNER   │  │   BUILDER   │  │ TRADESMAN  │  │
-│  │ (Contextual)│  │(Conceptual) │  │  (Logical)  │  │ (Physical)  │  │(Component) │  │
-│  │             │  │             │  │             │  │             │  │            │  │
-│  │ • Identity  │  │ • Trust     │  │ • ZKP       │  │ • IOTA      │  │ • BLS12381 │  │
-│  │   Needs     │  │   Models    │  │   Protocols │  │   Tangle    │  │   Curves   │  │
-│  │ • Privacy   │  │ • Security  │  │ • BBS+      │  │ • Node.js   │  │ • WASM     │  │
-│  │   Laws      │  │   Policies  │  │   Schemes   │  │   Runtime   │  │   Bindings │  │
-│  │ • Compliance│  │ • Access    │  │ • Selective │  │ • Database  │  │ • IOTA     │  │
-│  │   Rules     │  │   Control   │  │   Disclosure│  │   Systems   │  │   Identity │  │
-│  │             │  │             │  │             │  │             │  │   SDK      │  │
-│  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘  └────────────┘  │
-│                                                                                      │
-│  ┌────────────────────────────────────────────────────────────────────────────────┐  │
-│  │           SECURITY SERVICE MANAGEMENT SYSTEM                                   │  │
-│  │                                                                                │  │
-│  │  • Security Monitoring & Alerting                                              │  │
-│  │  • Key Management & Rotation                                                   │  │
-│  │  • Incident Response & Recovery                                                │  │
-│  │  • Compliance Auditing & Reporting                                             │  │
-│  │  • Risk Assessment & Management                                                │  │
-│  └────────────────────────────────────────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────────────────────────────┘
+    subgraph ZL ["ZKP Layer"]
+        ZL1["Zero-Knowledge Proof Generation"]
+        ZL2["Selective Disclosure Logic"]
+        ZL3["BBS+ Signature Operations"]
+        ZL4["Cryptographic Verification"]
+    end
+
+    subgraph PL ["Protocol Layer"]
+        PL1["IOTA Identity Framework"]
+        PL2["DID Resolution"]
+        PL3["Verifiable Credentials"]
+        PL4["W3C Standards Implementation"]
+    end
+
+    subgraph INL ["Infrastructure Layer"]
+        INL1["IOTA Tangle Network"]
+        INL2["Cloud Services (AWS, Azure, GCP)"]
+        INL3["Container Orchestration (Kubernetes)"]
+        INL4["Database Systems"]
+    end
+
+    %% Clean layer-to-layer connections
+    BL --> AL
+    AL --> IL
+    IL --> ZL
+    ZL --> PL
+    PL --> INL
 ```
 
 ### Real-world Deployment Patterns
@@ -801,146 +760,50 @@ The SABSA (Sherwood Applied Business Security Architecture) model for ZKP system
 
 Where ZKP technology sits in actual enterprise deployment scenarios:
 
+```mermaid
+graph TD
+    subgraph "REAL-WORLD DEPLOYMENT"
+        subgraph "External Stakeholders"
+            Citizens["Citizens/Users<br/>(Holders)"]
+            Businesses["Businesses<br/>(Verifiers)"]
+            Government["Government<br/>(Issuers)"]
+            Partners["Partners<br/>(Validators)"]
+        end
+
+        subgraph "Enterprise Perimeter"
+            subgraph "DMZ (Demilitarized Zone)"
+                APIGateway["API Gateway<br/>(Rate Limit)"]
+                LoadBalancer["Load Balancer<br/>(High Avail.)"]
+                WebFirewall["Web Application<br/>Firewall"]
+            end
+        end
+
+        subgraph "Application Tier"
+            DIDService["DID Resolution Service<br/>• DID Docs<br/>• Key Mgmt<br/>• Schema Resolution"]
+            BBSEngine["BBS+ Selective Disclosure Engine<br/>• Proof Gen<br/>• Verification<br/>• Holder-side Privacy"]
+            CredentialMgmt["Credential Management System<br/>• Issuance<br/>• Revocation<br/>• Status Tracking"]
+        end
+
+        subgraph "Data Tier"
+            DatabaseCluster["Database Cluster<br/>• Metadata<br/>• Audit Logs<br/>• Analytics"]
+            CacheLayer["Cache Layer (Redis)<br/>• Session<br/>• Temp Data<br/>• Performance Optimization"]
+            IOTATangle["IOTA Tangle Network<br/>• DID Docs<br/>• Public Keys<br/>• Revocation Registry"]
+        end
+    end
+
+    Citizens --> APIGateway
+    Businesses --> APIGateway
+    Government --> APIGateway
+    Partners --> APIGateway
+
+    APIGateway --> LoadBalancer
+    LoadBalancer --> WebFirewall
+
+    WebFirewall --> DIDService
+    WebFirewall --> BBSEngine
+    WebFirewall --> CredentialMgmt
+
+    DIDService --> DatabaseCluster
+    BBSEngine --> CacheLayer
+    CredentialMgmt --> IOTATangle
 ```
-┌───────────────────────────────────────────────────────────────────────────────┐
-│                        REAL-WORLD DEPLOYMENT                                  │
-├───────────────────────────────────────────────────────────────────────────────┤
-│                                                                               │
-│  EXTERNAL STAKEHOLDERS                                                        │
-│  ┌─────────────────────────────────────────────────────────────────────────┐  │
-│  │  Citizens/Users    │   Businesses    │   Government    │   Partners     │  │
-│  │  (Holders)         │   (Verifiers)   │   (Issuers)     │   (Validators) │  │
-│  └─────────────────────────────────────────────────────────────────────────┘  │
-│                                    │                                          │
-│                                    ▼                                          │
-│  ENTERPRISE PERIMETER                                                         │
-│  ┌─────────────────────────────────────────────────────────────────────────┐  │
-│  │                        DMZ (Demilitarized Zone)                         │  │
-│  │  ┌───────────────┐  ┌───────────────┐  ┌─────────────────┐              │  │
-│  │  │   API Gateway │  │  Load Balancer│  │  Web Application│              │  │
-│  │  │   (Rate Limit)│  │  (High Avail.)│  │  Firewall       │              │  │
-│  │  └───────────────┘  └───────────────┘  └─────────────────┘              │  │
-│  └─────────────────────────────────────────────────────────────────────────┘  │
-│                                    │                                          │
-│                                    ▼                                          │
-│  APPLICATION TIER                                                             │
-│  ┌─────────────────────────────────────────────────────────────────────────┐  │
-│  │  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐                │  │
-│  │  │   DID         │  │ BBS+ Selective│  │   Credential  │                │  │
-│  │  │   Resolution  │  │ Disclosure    │  │   Management  │                │  │
-│  │  │   Service     │  │ Engine        │  │   System      │                │  │
-│  │  │               │  │               │  │               │                │  │
-│  │  │ • DID Docs    │  │ • Proof Gen   │  │ • Issuance    │                │  │
-│  │  │ • Key Mgmt    │  │ • Verification│  │ • Revocation  │                │  │
-│  │  │ • Schema      │  │ • Holder-side │  │ • Status      │                │  │
-│  │  │   Resolution  │  │   Privacy     │  │   Tracking    │                │  │
-│  │  └───────────────┘  └───────────────┘  └───────────────┘                │  │
-│  └─────────────────────────────────────────────────────────────────────────┘  │
-│                                    │                                          │
-│                                    ▼                                          │
-│  DATA TIER                                                                    │
-│  ┌─────────────────────────────────────────────────────────────────────────┐  │
-│  │  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐                │  │
-│  │  │   Database    │  │  Cache Layer  │  │  IOTA Tangle  │                │  │
-│  │  │   Cluster     │  │  (Redis)      │  │  Network      │                │  │
-│  │  │               │  │               │  │               │                │  │
-│  │  │ • Metadata    │  │ • Session     │  │ • DID Docs    │                │  │
-│  │  │ • Audit Logs  │  │ • Temp Data   │  │ • Public Keys │                │  │
-│  │  │ • Analytics   │  │ • Performance │  │ • Revocation  │                │  │
-│  │  │               │  │   Optimization│  │   Registry    │                │  │
-│  │  └───────────────┘  └───────────────┘  └───────────────┘                │  │
-│  └─────────────────────────────────────────────────────────────────────────┘  │
-│                                                                               │
-│  **BBS+ Selective Disclosure sits primarily in APPLICATION TIER**             │
-│  **IOTA Identity SDK provides the cryptographic foundation**                  │
-│  **Connected to IOTA Tangle for immutable DID anchoring**                     │
-└───────────────────────────────────────────────────────────────────────────────┘
-```
-
-#### ZKP Technology Positioning
-
-The ZKP implementation is strategically positioned across multiple layers:
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                ZKP TECHNOLOGY POSITIONING                   │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  Layer 1: USER INTERFACE                                    │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │ • ZKP Proof Generation (Client-side)                  │  │
-│  │ • Selective Disclosure UI                             │  │
-│  │ • Privacy-preserving Authentication                   │  │
-│  └───────────────────────────────────────────────────────┘  │
-│                            │                                │
-│  Layer 2: APPLICATION LOGIC                                 │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │ • ZKP Verification Logic                              │  │
-│  │ • Credential Issuance with BBS+                       │  │
-│  │ • Privacy Policy Enforcement                          │  │
-│  └───────────────────────────────────────────────────────┘  │
-│                            │                                │
-│  Layer 3: CRYPTOGRAPHIC FOUNDATION                          │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │ • IOTA Identity Core (BBS+ Signatures)                │  │
-│  │ • Zero-Knowledge Proof Primitives                     │  │
-│  │ • Cryptographic Key Management                        │  │
-│  └───────────────────────────────────────────────────────┘  │
-│                            │                                │
-│  Layer 4: INFRASTRUCTURE                                    │
-│  ┌───────────────────────────────────────────────────────┐  │
-│  │ • IOTA Tangle (Immutable Storage)                     │  │
-│  │ • DID Registry and Resolution                         │  │
-│  │ • Revocation and Status Management                    │  │
-│  └───────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Key Positioning Benefits:**
-
-1. **Client-side Privacy**: ZKP generation happens in the browser, ensuring sensitive data never leaves the user's device
-2. **Scalable Verification**: Server-side verification is computationally efficient
-3. **Flexible Disclosure**: Users can selectively reveal only required attributes
-4. **Immutable Audit Trail**: IOTA Tangle provides transparent, tamper-proof records
-
-#### Technology Stack
-
-**Key Technologies:**
-
--   **TypeScript/WASM** for cross-platform development
--   **IOTA Identity SDK** for DID and verifiable credential operations
--   **BBS+ signatures** for selective disclosure capabilities
--   **IOTA Tangle** for decentralized DID registry
-
-**Deployment Architecture:**
-
-```
-┌───────────────────────────────────────────────────────────────┐
-│                   DEPLOYMENT ARCHITECTURE                     │
-├───────────────────────────────────────────────────────────────┤
-│                                                               │
-│  ┌─────────────────────────────────────────────────────────┐  │
-│  │                  CLIENT TIER                            │  │
-│  │  Browser (React/Vue + IOTA WASM) + Mobile Apps          │  │
-│  └─────────────────┬───────────────────────────────────────┘  │
-│                    │ HTTPS/WSS                                │
-│  ┌─────────────────▼───────────────────────────────────────┐  │
-│  │                APPLICATION TIER                         │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │  │
-│  │  │   API       │  │   ZKP       │  │   Identity      │  │  │
-│  │  │   Gateway   │  │   Service   │  │   Provider      │  │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────────┘  │  │
-│  └─────────────────┬───────────────────────────────────────┘  │
-│                    │ Internal Network                         │
-│  ┌─────────────────▼───────────────────────────────────────┐  │
-│  │                    DATA TIER                            │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  │  │
-│  │  │  MongoDB/   │  │    Redis    │  │   IOTA Tangle   │  │  │
-│  │  │ PostgreSQL  │  │   Cache     │  │   (DLT Layer)   │  │  │
-│  │  └─────────────┘  └─────────────┘  └─────────────────┘  │  │
-│  └─────────────────────────────────────────────────────────┘  │
-│                                                               │
-└───────────────────────────────────────────────────────────────┘
-```
-
-This enterprise architecture demonstrates how Zero-Knowledge Proofs integrate seamlessly with Self-Sovereign Identity systems to create a robust, privacy-preserving identity verification ecosystem that meets both technical and regulatory requirements while maintaining user control and privacy.
